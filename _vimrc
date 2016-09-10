@@ -34,27 +34,41 @@ Plugin 'gmarik/Vundle.vim'
 " Let's do some plugins!
 " ****************************************************
 
-Plugin 'tpope/vim-sensible'
+" Plugin 'tpope/vim-sensible' do this by hand
+
+" editing and such plugins
 Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-unimpaired'
 Plugin 'tpope/vim-repeat'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-abolish'
 Plugin 'nelstrom/vim-visual-star-search'
+Plugin 'tpope/vim-repeat'
 
+" text objects
+Plugin 'bkad/CamelCaseMotion'
+Plugin 'inkarkat/argtextobj.vim'
+Plugin 'terryma/vim-expand-region'
+
+" file directory
 Plugin 'tpope/vim-vinegar'
 Plugin 'scrooloose/nerdtree'
+" Plugin 'jeetsukumaran/vim-filebeagle'
 
+" Git
 Plugin 'tpope/vim-fugitive'
 
 
+" shoug and unite
 
-" shoug
-Plugin 'shougo/vimproc.vim'
+" basic
 Plugin 'shougo/unite.vim'
-Plugin 'shougo/unite-outline'
-Plugin 'shougo/neomru.vim'
+Plugin 'shougo/vimproc.vim'
 
+" Addons
+Plugin 'shougo/neomru.vim'
+Plugin 'shougo/unite-outline'
+Plugin 'junkblocker/unite-codesearch'
 Plugin 'rking/ag.vim'
 
 " rust
@@ -64,11 +78,9 @@ Plugin 'phildawes/racer'
 " nim
 Plugin 'zah/nim.vim'
 
-" text objects
-Plugin 'bkad/CamelCaseMotion'
-Plugin 'inkarkat/argtextobj.vim'
-Plugin 'terryma/vim-expand-region'
 
+
+" color and themes
 Plugin 'altercation/vim-colors-solarized'
 " for 256 color terminals
 Plugin 'jnurmine/Zenburn'
@@ -76,8 +88,8 @@ Plugin 'morhetz/gruvbox'
 
 Plugin 'bling/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
-
-" Easy motion, YCM, multi cursor, colorcoded, though that does not work on Win
+Plugin 'easymotion/vim-easymotion'
+" Missing YCM, multi cursor, colorcoded, though that does not work on Win
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -95,22 +107,64 @@ filetype plugin indent on    " required
 " see :h vundle for more details or wiki for FAQ
 " }}} Plugin installation
 " Put your non-Plugin stuff after this line
-
-
+"
+"
+" ================ General Config ====================
+"
 " More sensible settings
+set number "Line numbers are good
+set backspace=indent,eol,start "Allow backspace in insert mode
+set history=1000 "Store lots of :cmdline history
+set showcmd "Show incomplete cmds down the bottom
+set showmode "Show current mode down the bottom
+set gcr=a:blinkon0 "Disable cursor blink
+set visualbell "No sounds
+set autoread "Reload files changed outside vim
+" This makes vim act like all other editors, buffers can
+" exist in the background without being in a window.
+" http://items.sjbach.com/319/configuring-vim-right
 set hidden
-set wildmenu
-set showcmd
-set ignorecase
-set smartcase
-set hlsearch
-set laststatus=2
-set cmdheight=2
-set number
+"turn on syntax highlighting
+syntax on
+
+" ================ Indentation ======================
+set autoindent
+set smartindent
+set smarttab
 set shiftwidth=4
 set softtabstop=4
+set tabstop=4
 set expandtab
-set backspace=indent,eol,start
+" Display tabs and trailing spaces visually
+" set list listchars=tab:\ \ ,trail:·
+set nowrap "Don't wrap lines
+set linebreak "Wrap lines at convenient points
+" ================ Folds ============================
+set foldmethod=indent "fold based on indent
+set foldnestmax=3 "deepest fold is 3 levels
+set nofoldenable "dont fold by default
+" ================ Completion =======================
+set wildmode=list:longest
+set wildmenu "enable ctrl-n and ctrl-p to scroll thru matches
+set wildignore=*.o,*.obj,*~ "stuff to ignore when tab completing
+set wildignore+=*vim/backups*
+set wildignore+=*sass-cache*
+set wildignore+=*DS_Store*
+set wildignore+=vendor/rails/**
+set wildignore+=vendor/cache/**
+set wildignore+=*.gem
+set wildignore+=log/**
+set wildignore+=tmp/**
+set wildignore+=*.png,*.jpg,*.gif
+"
+" ================ Scrolling ========================
+set scrolloff=8 "Start scrolling when we're 8 lines away from margins
+" ================ Search ===========================
+set incsearch " Find the next match as we type the search
+set hlsearch " Highlight searches by default
+set ignorecase " Ignore case when searching...
+set smartcase " ...unless we type a capital
+" ================ Custom Settings ========================
 
 if has("multi_byte")
     if &termencoding == ""
@@ -122,6 +176,7 @@ if has("multi_byte")
     set fileencodings=utf-8,latin1
 endif
 
+" ================ GVim Config ======================
 if has("gui_running")
     set guioptions-=m  "remove menu bar
     set guioptions-=T  "remove toolbar
@@ -133,11 +188,56 @@ if has("gui_running")
     colorscheme gruvbox
 endif
 
+" ================ Consoles Config ======================
+
+" cursor stuff for mintty
+" let &t_ti.="\e[1 q"
+" let &t_SI.="\e[5 q"
+" let &t_EI.="\e[1 q"
+" let &t_te.="\e[0 q"
+" echom "Running in conemu"
+" set termencoding=utf8
+" set term=xterm
+" set t_Co=256
+" let &t_AB="\e[48;5;%dm"
+" let &t_AF="\e[38;5;%dm"
+
+if !has('gui_running')
+    set ttimeoutlen=10
+    augroup FastEscape
+        autocmd!
+        au InsertEnter * set timeoutlen=0
+        au InsertLeave * set timeoutlen=1000
+    augroup END
+endif
+
+if ($ConEmuAnsi ==? 'ON')
+    " echom "Running in conemu in ANSI mode"
+    " set termencoding=utf8
+    set term=xterm
+    set t_Co=256
+    let &t_AB="\e[48;5;%dm"
+    let &t_AF="\e[38;5;%dm"
+    colorscheme zenburn
+    " problem with backspace fix
+    inoremap <Char-0x07F> <BS>
+    nnoremap <Char-0x07F> <BS>
+    " let mouse wheel scroll file contents
+    set mouse=a
+    inoremap <Esc>[62~ <C-X><C-E>
+    inoremap <Esc>[63~ <C-X><C-Y>
+    nnoremap <Esc>[62~ <C-E>
+    nnoremap <Esc>[63~ <C-Y>
+endif
+
+==================== Airline ===================================
+
 " vim-airline {{{
 " NOTE needs utf-8 codepage
 " chcp 65001
 set laststatus=2                                    " Make the second to last line of vim our status line
-
+set laststatus=2
+set cmdheight=2
 let g:airline#extensions#branch#enabled = 1         " Do show the git branch in the status line
 " let g:airline_section_c = '%<%f%m%#__accent_red#%{airline#util#wrap(airline#parts#readonly(),0)}%#__restore__#'
 " let g:airline#extensions#syntastic#enabled = 1      " Do show syntastic warnings in the status line
@@ -188,34 +288,6 @@ let g:airline_symbols.spell = "§"
 let g:airline_symbols.notexists = "Ø"
 " \u2022 bullet
 let g:airline_symbols.modified = "•"
-" let g:airline_left_sep = '»'
-" let g:airline_left_sep = '▶'263
-" let g:airline_right_sep = '«'
-" let g:airline_right_sep = '◀'
-" let g:airline_symbols.crypt = '🔒'
-" let g:airline_symbols.linenr = '␊'
-" let g:airline_symbols.linenr = '␤'
-" let g:airline_symbols.linenr = '¶'
-" let g:airline_symbols.branch = '⎇'
-" let g:airline_symbols.spell = 'Ꞩ'
-" let g:airline_symbols.notexists = '∄'
-" let g:airline_left_sep = '»'
-"   let g:airline_left_sep = '▶'
-"   let g:airline_right_sep = '«'
-"   let g:airline_right_sep = '◀'
-"   let g:airline_symbols.crypt = '🔒'
-"   let g:airline_symbols.linenr = '␊'
-"   let g:airline_symbols.linenr = '␤'
-"   let g:airline_symbols.linenr = '¶'
-"   let g:airline_symbols.maxlinenr = '☰'
-"   let g:airline_symbols.maxlinenr = ''
-"   let g:airline_symbols.branch = '⎇'
-"   let g:airline_symbols.paste = 'ρ'
-"   let g:airline_symbols.paste = 'Þ'
-"   let g:airline_symbols.paste = '∥'
-"   let g:airline_symbols.spell = 'Ꞩ'
-"   let g:airline_symbols.notexists = '∄'
-" let g:airline_symbols.whitespace = 'Ξ'
 let g:airline_detect_modified = 0
 function! Init()
     call airline#parts#define_raw('modimodi', '%{&modified ? g:airline_symbols.modified : ""}')
@@ -224,49 +296,23 @@ endfunction
 autocmd VimEnter * call Init()
 " }}}
 
-" cursor stuff for mintty
-" let &t_ti.="\e[1 q"
-" let &t_SI.="\e[5 q"
-" let &t_EI.="\e[1 q"
-" let &t_te.="\e[0 q"
-" echom "Running in conemu"
-" set termencoding=utf8
-" set term=xterm
-" set t_Co=256
-" let &t_AB="\e[48;5;%dm"
-" let &t_AF="\e[38;5;%dm"
-
-if !has('gui_running')
-    set ttimeoutlen=10
-    augroup FastEscape
-        autocmd!
-        au InsertEnter * set timeoutlen=0
-        au InsertLeave * set timeoutlen=1000
-    augroup END
-endif
-
-if ($ConEmuAnsi ==? 'ON')
-    " echom "Running in conemu in ANSI mode"
-    " set termencoding=utf8
-    set term=xterm
-    set t_Co=256
-    let &t_AB="\e[48;5;%dm"
-    let &t_AF="\e[38;5;%dm"
-    colorscheme zenburn
-    " problem with backspace fix
-    inoremap <Char-0x07F> <BS>
-    nnoremap <Char-0x07F> <BS>
-    " let mouse wheel scroll file contents
-    set mouse=a
-    inoremap <Esc>[62~ <C-X><C-E>
-    inoremap <Esc>[63~ <C-X><C-Y>
-    nnoremap <Esc>[62~ <C-E>
-    nnoremap <Esc>[63~ <C-Y>
-endif
 
 " Solarized
 "set background=dark
 "colorscheme solarized
+
+
+
+let g:racer_cmd = "C:\\bin\\racer\\target\\release\\racer.exe"
+let $RUST_SRC_PATH="C:\\Rust_stable_1.1\\src"
+
+" ================      Mappings      ========================
+
+let mapleader = "\<Space>"
+
+" move vertically by visual line
+nnoremap j gj
+nnoremap k gk
 
 " Y yanks until end of line instead of full line
 map Y y$
@@ -275,11 +321,15 @@ map Y y$
 vnoremap < <gv
 vnoremap > >gv
 
-let mapleader = "\<Space>"
-" leader w to save file
+"save file with leader
 nnoremap <Leader>w :w<CR>
 
-" leader stuff to cut, yank past to system clipboard
+"Automatically jump to end of text you pasted
+vnoremap y y`]
+vnoremap p p`]
+nnoremap p p`]
+
+"Copy & paste to system clipboard 
 vmap <Leader>y "+y
 vmap <Leader>d "+d
 nmap <Leader>p "+p
@@ -290,17 +340,10 @@ vmap <Leader>P "+P
 " double tap for visual mode
 nmap <Leader><Leader> V
 
-" expand and shrink region in visual mode
-vmap v <Plug>(expand_region_expand)
-vmap <C-v> <Plug>(expand_region_shrink)
-
 " reselect what was just pasted
 noremap gV `[v`]
 
-let g:racer_cmd = "C:\\bin\\racer\\target\\release\\racer.exe"
-let $RUST_SRC_PATH="C:\\Rust_stable_1.1\\src"
-
-" Unite
+" ================      Unite      ========================
 let g:unite_source_history_yank_enable = 1
 let g:unite_source_ = 1
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
@@ -327,4 +370,10 @@ function! s:unite_settings()
   imap <buffer> <C-j>   <Plug>(unite_select_next_line)
   imap <buffer> <C-k>   <Plug>(unite_select_previous_line)
 endfunction
+
+================ Other Plugin Mappings ===================================
+
+" expand and shrink region in visual mode
+vmap v <Plug>(expand_region_expand)
+vmap <C-v> <Plug>(expand_region_shrink)
 
