@@ -30,3 +30,6 @@ pacman -S clang
 
 ##Inspiration
  - [Mike Hartington's Dotfiles](https://github.com/mhartington/dotfiles)
+
+##Todo
+ Checkout [The ultimate Vim configuration on Github](https://github.com/amix/vimrc)
