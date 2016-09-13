@@ -94,7 +94,9 @@ nnoremap <Space>a :A<CR>
 nnoremap <Space>h :contexthelp<CR>
 nnoremap gcc :comment<CR>
 vnoremap gc :comment<CR>
-" nnoremap <Space>n :tag<CR>
+
+" goto definition
+nnoremap <Space>n :tag<CR>
 
 " Visual shifting (does not exit Visual mode)
 vnoremap < <gv
@@ -103,10 +105,13 @@ vnoremap > >gv
 " reselect what was just pasted
 noremap gV `[v`]
 
-" goto definition
-nnoremap <Space>n :gotodef<CR>
-
 nnoremap gf :gotofile<CR>
 
-nnoremap <C-O> :goback<CR>
-nnoremap <C-I> :gofwd<CR>
+" better to do this directly in the settings
+" nnoremap <C-O> :goback<CR>
+" nnoremap <C-I> :gofwd<CR>
+
+" locate
+nnoremap <Space>e :e<CR>
+
+nnoremap <Space>s :projectsidebar<CR>
