@@ -16,7 +16,7 @@ set hidden
 "turn on syntax highlighting
 syntax on
 " ================ Indentation ======================
-
+set autoindent
 set smartindent
 set noexpandtab
 set smarttab

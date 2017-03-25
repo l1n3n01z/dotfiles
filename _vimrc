@@ -51,11 +51,11 @@ Plugin 'inkarkat/argtextobj.vim'
 Plugin 'terryma/vim-expand-region'
 
 " file directory
-NeoBundle 'scrooloose/nerdtree'
-" NeoBundle 'tpope/vim-vinegar'
-" better vinegar handling for nerdtree
-NeoBundle 'dhruvasagar/vim-vinegar'
-" NeoBundle 'jeetsukumaran/vim-filebeagle'
+Plugin 'scrooloose/nerdtree'
+" Plugin 'tpope/vim-vinegar'
+" better vinegar handling for nerdtree, maybe
+Plugin 'dhruvasagar/vim-vinegar'
+" Plugin 'jeetsukumaran/vim-filebeagle'
 
 " Git
 Plugin 'tpope/vim-fugitive'
@@ -528,10 +528,10 @@ nnoremap <Bslash>r <C-W>r
 
 "create a scratch buffer.
 function! ScratchEdit(cmd, options)
-	exe a:cmd tempname()
-	" setl buftype=nofile bufhidden=wipe nobuflisted
-	setl buftype=nofile bufhidden=wipe
-	if !empty(a:options) | exe 'setl' a:options | endif
+    exe a:cmd tempname()
+    " setl buftype=nofile bufhidden=wipe nobuflisted
+    setl buftype=nofile bufhidden=wipe
+    if !empty(a:options) | exe 'setl' a:options | endif
 endfunction
 
 command! -bar -nargs=* Sedit call ScratchEdit('edit', <q-args>)
@@ -559,13 +559,13 @@ nnoremap <leader>u :UniteWithProjectDir -no-split -auto-preview -select=0 -verti
 
 " ashtneioqdwrfup;;;p;
 let g:unite_quick_match_table = {
-						\ 'a' : 7, 's' : 5, 'h' : 3, 't' : 1,
-						\ 'n' : 2, 'e' : 4, 'i' : 6, 'o' : 8,
-						\ 'c' : 9, 'l' : 10,
-						\ 'r' : 11, 'f' : 12,
-						\ 'd' : 13, 'u' : 14,
-						\ 'g' : 15, 'k' : 16,
-						\}
+                        \ 'a' : 7, 's' : 5, 'h' : 3, 't' : 1,
+                        \ 'n' : 2, 'e' : 4, 'i' : 6, 'o' : 8,
+                        \ 'c' : 9, 'l' : 10,
+                        \ 'r' : 11, 'f' : 12,
+                        \ 'd' : 13, 'u' : 14,
+                        \ 'g' : 15, 'k' : 16,
+                        \}
 
 " For ag.
 if executable('ag')

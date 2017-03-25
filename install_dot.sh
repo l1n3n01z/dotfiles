@@ -4,12 +4,14 @@
 # This script creates symlinks from the home directory to any desired dotfiles in ~/dotfiles
 ############################
 
+files="gitconfig babunrc bashrc minttyrc vimrc zshrc oh-my-zsh vim tmux.conf fakevimrc"    # list of files/folders to symlink in homedir
+
 ########## Variables
 
-dir=~/dotfiles                    # dotfiles directory
+# current dir of installation script
+dir="$(dirname "${BASH_SOURCE[0]}")"
+# dir=~/dotfiles                    # dotfiles directory
 olddir=~/dotfiles_old             # old dotfiles backup directory
-#files="bashrc vimrc vim zshrc oh-my-zsh"    # list of files/folders to symlink in homedir
-files="babunrc bashrc minttyrc vimrc zshrc oh-my-zsh"    # list of files/folders to symlink in homedir
 
 ##########
 
@@ -24,9 +26,11 @@ cd $dir
 echo "...done"
 
 # move any existing dotfiles in homedir to dotfiles_old directory, then create symlinks 
+echo "Moving any existing dotfiles from ~ to $olddir"
 for file in $files; do
-    echo "Moving any existing dotfiles from ~ to $olddir"
-    mv ~/.$file ~/dotfiles_old/
-    echo "Creating symlink to $file in home directory."
-    ln -s $dir/$file ~/.$file
+    if [ -f ~/.$file ]; then
+            mv ~/.$file ~/dotfiles_old/
+            echo "Creating symlink to $file in home directory."
+            ln -s $dir/$file ~/.$file
+    fi
 done
