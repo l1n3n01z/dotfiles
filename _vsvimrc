@@ -1,0 +1,138 @@
+" Use Vim settings, rather then Vi settings (much better!).
+" This must be first, because it changes other options as a side effect.
+set nocompatible
+
+" ================ General Config ====================
+set number "Line numbers are good
+set backspace=indent,eol,start "Allow backspace in insert mode
+set history=1000 "Store lots of :cmdline history
+set showcmd "Show incomplete cmds down the bottom
+set showmode "Show current mode down the bottom
+set gcr=a:blinkon0 "Disable cursor blink
+set visualbell "No sounds
+set autoread "Reload files changed outside vim
+" This makes vim act like all other editors, buffers can
+" exist in the background without being in a window.
+" http://items.sjbach.com/319/configuring-vim-right
+set hidden
+"turn on syntax highlighting
+syntax on
+" ================ Indentation ======================
+set autoindent
+set smartindent
+set smarttab
+" set shiftwidth=2
+set softtabstop=4
+set tabstop=4
+set expandtab
+filetype plugin on
+filetype indent on
+" Display tabs and trailing spaces visually
+set list listchars=tab:\ \ ,trail:·
+set nowrap "Don't wrap lines
+set linebreak "Wrap lines at convenient points
+" ================ Folds ============================
+set foldmethod=indent "fold based on indent
+set foldnestmax=3 "deepest fold is 3 levels
+set nofoldenable "dont fold by default
+" ================ Completion =======================
+set wildmode=list:longest
+set wildmenu "enable ctrl-n and ctrl-p to scroll thru matches
+set wildignore=*.o,*.obj,*~ "stuff to ignore when tab completing
+set wildignore+=*vim/backups*
+set wildignore+=*sass-cache*
+set wildignore+=*DS_Store*
+set wildignore+=vendor/rails/**
+set wildignore+=vendor/cache/**
+set wildignore+=*.gem
+set wildignore+=log/**
+set wildignore+=tmp/**
+set wildignore+=*.png,*.jpg,*.gif
+"
+" ================ Scrolling ========================
+set scrolloff=8 "Start scrolling when we're 8 lines away from margins
+" ================ Search ===========================
+set incsearch " Find the next match as we type the search
+set hlsearch " Highlight searches by default
+set ignorecase " Ignore case when searching...
+set smartcase " ...unless we type a capital
+" ================ Custom Settings ========================
+
+let mapleader = "\<Space>"
+
+noremap <A-h> <Left>
+noremap <A-j> <Down>
+noremap <A-k> <Up>
+noremap <A-l> <Right>
+
+" move vertically by visual line
+nnoremap j gj
+nnoremap k gk
+
+"turn off search highlight using esc
+nnoremap <esc> :noh<CR><esc>
+
+"save file with leader
+nnoremap <Leader>w :w<CR>
+
+"Automatically jump to end of text you pasted
+vnoremap y y`]
+vnoremap p p`]
+nnoremap p p`]
+
+"Copy & paste to system clipboard 
+vmap <Leader>y "+y
+vmap <Leader>d "+d
+"nmap <Leader>p "+p
+"nmap <Leader>P "+P
+vmap <Leader>p "+p
+vmap <Leader>P "+P
+nmap <Leader>p :set paste<CR>o<esc>"*]p:set nopaste<cr>
+nmap <Leader>P :set paste<CR>o<esc>"*]P:set nopaste<cr>
+
+"Resharper
+nnoremap <C-O> :vsc View.NavigateForward<CR>
+nnoremap <C-I> :vsc View.NavigateBackward<CR>
+inoremap <C-e> <C-o>A
+inoremap <C-a> <C-o>I
+
+nnoremap <Leader>g :vsc ReSharper.ReSharper_Generate<CR>
+nnoremap <Leader>o :vsc View.NavigateForward<CR>
+nnoremap <Leader>i :vsc View.NavigateBackward<CR>
+nnoremap <Leader>u :vsc ReSharper.ReSharper_FindUsages<CR>
+nnoremap <Leader>e :vsc ReSharper.ReSharper_GotoType<CR>
+nnoremap <Leader>b :vsc ReSharper.ReSharper_GotoBase<CR>
+nnoremap <Leader>n :vsc ReSharper.ReSharper_GotoDeclaration<CR>
+nnoremap <Leader>r :vsc ReSharper.ReSharper_GotoImplementation<CR>
+nnoremap <Leader>s :vsc SolutionExplorer.SyncWithActiveDocument<CR>
+nnoremap <Leader>fi :vsc Edit.FindinFiles<CR>
+nnoremap <Leader>ff :vsc ReSharper.ReSharper_GotoFile<CR>
+nnoremap <Leader>a :vsc EditorContextMenus.CodeWindow.ToggleHeaderCodeFile<CR> 
+nnoremap <Leader>w :vsc File.SaveAll<CR>
+"Google It
+nnoremap gi :vsc EditorContextMenus.CodeWindow.SimpleWebSearch<CR>
+nnoremap gcc :vsc ReSharper.ReSharper_LineComment<CR>k
+vnoremap gc :vsc ReSharper.ReSharper_LineComment<CR>k
+"noremap gcu :vsc Edit.UncommentSelection<CR>
+"As solution wide analysis is not on for C++, this should give us next error
+nnoremap ]r :vsc ReSharper.ReSharper_GotoNextErrorInSolution<CR>
+nnoremap [r :vsc ReSharper.ReSharper_GotoPrevErrorInSolution<CR>
+"nnoremap ]r :vsc View.NextError<CR>
+"nnoremap [r :vsc View.PreviousError<CR>
+nnoremap <Leader><CR> :vsc ReSharper_AltEnter<CR>
+nnoremap ]] :vsc ReSharper.ReSharper_GotoNextMethod<CR>
+nnoremap [[ :vsc ReSharper.ReSharper_GotoPrevMethod<CR>
+nnoremap ]e :vsc ReSharper.ReSharper_MoveDown<CR>
+nnoremap [e :vsc ReSharper.ReSharper_MoveUp<CR>
+vnoremap ]e :vsc ReSharper.ReSharper_MoveDown<CR>
+vnoremap [e :vsc ReSharper.ReSharper_MoveUp<CR>
+"Add space above/below line 
+nnoremap ]<Space> o<esc>:vsc View.NavigateBackward<CR>
+nnoremap [<Space> O<esc>:vsc View.NavigateBackward<CR>
+nnoremap ]} /}<CR>
+nnoremap [} ?}<CR>
+nnoremap ]{ /{<CR>
+nnoremap [{ ?{<CR>
+nnoremap <Leader><Leader> V
+"Unfortunately won't work until 1.8.1
+nnoremap <Leader>. @:

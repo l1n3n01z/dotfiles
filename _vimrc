@@ -51,9 +51,11 @@ Plugin 'inkarkat/argtextobj.vim'
 Plugin 'terryma/vim-expand-region'
 
 " file directory
-Plugin 'tpope/vim-vinegar'
-Plugin 'scrooloose/nerdtree'
-" Plugin 'jeetsukumaran/vim-filebeagle'
+NeoBundle 'scrooloose/nerdtree'
+" NeoBundle 'tpope/vim-vinegar'
+" better vinegar handling for nerdtree
+NeoBundle 'dhruvasagar/vim-vinegar'
+" NeoBundle 'jeetsukumaran/vim-filebeagle'
 
 " Git
 Plugin 'tpope/vim-fugitive'
@@ -499,7 +501,7 @@ vmap <Leader>p "+p
 vmap <Leader>P "+P
 
 " double tap for visual mode
-nmap <Leader><Leader> V
+" nmap <Leader><Leader> V
 
 " reselect what was just pasted
 noremap gV `[v`]
