@@ -204,7 +204,6 @@ endif
 " let &t_AF="\e[38;5;%dm"
 
 " leave insert mode quickly
-
 if !has('gui_running')
     set ttimeoutlen=10
     augroup FastEscape
@@ -591,7 +590,7 @@ function! s:unite_settings()
 endfunction
 " }}}
 
-================ Other Plugin Mappings ===================================
+" ================ Other Plugin Mappings ===================================
 
 " expand and shrink region in visual mode
 vmap v <Plug>(expand_region_expand)
