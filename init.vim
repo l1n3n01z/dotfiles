@@ -256,6 +256,7 @@ endif
 " Unite
 " ------------------------------------------------------------------
 " unite.vim {{{
+if has_key(g:plugs, 'unite.vim')
 let g:unite_source_grep_command = 'ag'
 let g:unite_source_grep_default_opts =
                         \ '--line-numbers --nocolor --nogroup --hidden --ignore ' .
@@ -289,13 +290,14 @@ function! s:unite_settings()
 endfunction
 " ashtneioqdwrfup;;;p;
 let g:unite_quick_match_table = {
-						\ 'a' : 7, 's' : 5, 'h' : 3, 't' : 1,
-						\ 'n' : 2, 'e' : 4, 'i' : 6, 'o' : 8,
-						\ 'c' : 9, 'l' : 10,
-						\ 'r' : 11, 'f' : 12,
-						\ 'd' : 13, 'u' : 14,
-						\ 'g' : 15, 'k' : 16,
-						\}
+                        \ 'a' : 7, 's' : 5, 'h' : 3, 't' : 1,
+                        \ 'n' : 2, 'e' : 4, 'i' : 6, 'o' : 8,
+                        \ 'c' : 9, 'l' : 10,
+                        \ 'r' : 11, 'f' : 12,
+                        \ 'd' : 13, 'u' : 14,
+                        \ 'g' : 15, 'k' : 16,
+                        \}
+endif
 " }}}
 
 " ------------------------------------------------------------------
@@ -436,10 +438,10 @@ nnoremap <Bslash>r <C-W>r
 
 "create a scratch buffer.
 function! ScratchEdit(cmd, options)
-	exe a:cmd tempname()
-	" setl buftype=nofile bufhidden=wipe nobuflisted
-	setl buftype=nofile bufhidden=wipe
-	if !empty(a:options) | exe 'setl' a:options | endif
+    exe a:cmd tempname()
+    " setl buftype=nofile bufhidden=wipe nobuflisted
+    setl buftype=nofile bufhidden=wipe
+    if !empty(a:options) | exe 'setl' a:options | endif
 endfunction
 
 command! -bar -nargs=* Sedit call ScratchEdit('edit', <q-args>)
