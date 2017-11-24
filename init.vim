@@ -86,6 +86,10 @@ call plug#end()
 
 let g:ycm_server_python_interpreter = '/usr/bin/python2'
 let g:chromatica#libclang_path = '/usr/lib/llvm-3.9/lib'
+let g:chromatica#highlight_feature_level = 1
+let g:chromatica#highlight_feature_level = 1
+let g:chromatica#responsive_mode = 1
+let g:chromatica#enable_at_startup = 1
 " Required:
 filetype plugin indent on
 
@@ -421,7 +425,9 @@ vmap <Leader>P "+P
 nnoremap <Leader>z za
 
 " goto definition using Ycm
-nnoremap <Leader>n :YcmCompleter GoTo<CR>
+" nnoremap <Leader>n :YcmCompleter GoTo<CR>
+" let g:rtagsUseDefaultMappings = 0
+" nnoremap <Leader>n :YcmCompleter GoTo<CR>
 
 " goto alternate file using a.vim
 nnoremap <Leader>a :A<CR>
