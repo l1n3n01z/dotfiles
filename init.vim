@@ -304,7 +304,6 @@ let g:unite_quick_match_table = {
                         \}
 endif
 " }}}
-
 " ------------------------------------------------------------------
 " Colorscheme Config
 " ------------------------------------------------------------------
@@ -415,7 +414,9 @@ nnoremap p p`]
 
 "Copy & paste to system clipboard
 vmap <Leader>y "+y
+nmap <Leader>y "+yy
 vmap <Leader>d "+d
+nmap <Leader>d "+dd
 nmap <Leader>p "+p
 nmap <Leader>P "+P
 vmap <Leader>p "+p
