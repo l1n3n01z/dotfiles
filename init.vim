@@ -28,7 +28,7 @@ Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'easymotion/vim-easymotion'
-Plug 'rking/ag.vim'
+" Plug 'rking/ag.vim'
 
 " file and git management
 " Plug 'jeetsukumaran/vim-filebeagle'
@@ -49,7 +49,7 @@ Plug 'morhetz/gruvbox'
 " Plug 'w0ng/vim-hybrid'
 
 " Glorious C++
-" rtags is the ultimate find dedfinition/refs plugin
+" rtags is the ultimate find definition/refs plugin
 Plug 'lyuts/vim-rtags'
 " jeaye color_coded does not work in neovim
 " use this instead
@@ -82,14 +82,21 @@ Plug 'arakashic/chromatica.nvim'
 " \    },
 " \ }
 
+Plug 'Shougo/denite.nvim'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+" blergh. Needs boost to be installed.
+" libboost-all-dev
+" For full utf-8
+" libicu-dev
+Plug 'nixprime/cpsm', { 'do': './install.sh' }
 call plug#end()
 
 let g:ycm_server_python_interpreter = '/usr/bin/python2'
 let g:chromatica#libclang_path = '/usr/lib/llvm-3.9/lib'
 let g:chromatica#highlight_feature_level = 1
-let g:chromatica#highlight_feature_level = 1
 let g:chromatica#responsive_mode = 1
 let g:chromatica#enable_at_startup = 1
+" let g:chromatica#enable_log = 1
 " Required:
 filetype plugin indent on
 
@@ -257,56 +264,84 @@ endif
 " check manually on t_Co
 " :echo &t_Co
 
-" ------------------------------------------------------------------
-" Unite
-" ------------------------------------------------------------------
-" unite.vim {{{
-if has_key(g:plugs, 'unite.vim')
-let g:unite_source_grep_command = 'ag'
-let g:unite_source_grep_default_opts =
-                        \ '--line-numbers --nocolor --nogroup --hidden --ignore ' .
-                        \  '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'''
-let g:unite_source_grep_recursive_opt = ''
+" I have stopped using Unite.
+" " ------------------------------------------------------------------
+" " Unite
+" " ------------------------------------------------------------------
+" " unite.vim {{{
+" if has_key(g:plugs, 'unite.vim')
+" let g:unite_source_grep_command = 'ag'
+" let g:unite_source_grep_default_opts =
+"                         \ '--line-numbers --nocolor --nogroup --hidden --ignore ' .
+"                         \  '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'''
+" let g:unite_source_grep_recursive_opt = ''
 
-let g:unite_source_history_yank_enable = 1
-call unite#filters#matcher_default#use(['matcher_fuzzy'])
-nnoremap <leader>t :<C-u>Unite -no-split -buffer-name=files   -start-insert file_rec/async:!<cr>
-nnoremap <leader>f :<C-u>Unite -no-split -buffer-name=files   -start-insert file<cr>
-" nnoremap <leader>r :<C-u>Unite -no-split -buffer-name=mru     -start-insert file_mru<cr>
-nnoremap <leader>o :<C-u>Unite -no-split -buffer-name=outline -start-insert outline<cr>
-nnoremap <leader>y :<C-u>Unite -no-split -buffer-name=yank    history/yank<cr>
-nnoremap <leader>e :<C-u>Unite -no-split -buffer-name=buffer  buffer<cr>
-" nnoremap <leader>u :<C-u>Unite -no-split -buffer-name=grep grep:.<cr>
-" nnoremap <leader>u :UniteWithCursorWord -no-split -start-insert -no-quit -buffer-name=ag grep:.:<CR>
-" nnoremap <leader>u :Unite -no-split -buffer-name=ag -default-action=smart-preview grep:.::\\W<C-R><C-W>\\W<CR>
-nnoremap <leader>u :UniteWithProjectDir -no-split -auto-preview -select=0 -vertical -buffer-name=ag grep:.::\\b<C-R><C-W>\\b<CR>
+" let g:unite_source_history_yank_enable = 1
+" call unite#filters#matcher_default#use(['matcher_fuzzy'])
+" nnoremap <leader>t :<C-u>Unite -no-split -buffer-name=files   -start-insert file_rec/async:!<cr>
+" nnoremap <leader>f :<C-u>Unite -no-split -buffer-name=files   -start-insert file<cr>
+" " nnoremap <leader>r :<C-u>Unite -no-split -buffer-name=mru     -start-insert file_mru<cr>
+" nnoremap <leader>o :<C-u>Unite -no-split -buffer-name=outline -start-insert outline<cr>
+" nnoremap <leader>y :<C-u>Unite -no-split -buffer-name=yank    history/yank<cr>
+" nnoremap <leader>e :<C-u>Unite -no-split -buffer-name=buffer  buffer<cr>
+" " nnoremap <leader>u :<C-u>Unite -no-split -buffer-name=grep grep:.<cr>
+" " nnoremap <leader>u :UniteWithCursorWord -no-split -start-insert -no-quit -buffer-name=ag grep:.:<CR>
+" " nnoremap <leader>u :Unite -no-split -buffer-name=ag -default-action=smart-preview grep:.::\\W<C-R><C-W>\\W<CR>
+" nnoremap <leader>u :UniteWithProjectDir -no-split -auto-preview -select=0 -vertical -buffer-name=ag grep:.::\\b<C-R><C-W>\\b<CR>
 
-" Custom mappings for the unite buffer
-autocmd FileType unite call s:unite_settings()
-function! s:unite_settings()
-  " Play nice with supertab
-  let b:SuperTabDisabled=1
-  " Enable navigation with control-j and control-k in insert mode
-  imap <buffer> <C-j>   <Plug>(unite_select_next_line)
-  imap <buffer> <C-k>   <Plug>(unite_select_previous_line)
-  imap <buffer> '     <Plug>(unite_quick_match_jump)
-  nmap <buffer> '     <Plug>(unite_quick_match_jump)
-  nmap <buffer> <C-j>     <Plug>(unite_toggle_auto_preview)
-endfunction
-" ashtneioqdwrfup;;;p;
-let g:unite_quick_match_table = {
-                        \ 'a' : 7, 's' : 5, 'h' : 3, 't' : 1,
-                        \ 'n' : 2, 'e' : 4, 'i' : 6, 'o' : 8,
-                        \ 'c' : 9, 'l' : 10,
-                        \ 'r' : 11, 'f' : 12,
-                        \ 'd' : 13, 'u' : 14,
-                        \ 'g' : 15, 'k' : 16,
-                        \}
-endif
+" " Custom mappings for the unite buffer
+" autocmd FileType unite call s:unite_settings()
+" function! s:unite_settings()
+"   " Play nice with supertab
+"   let b:SuperTabDisabled=1
+"   " Enable navigation with control-j and control-k in insert mode
+"   imap <buffer> <C-j>   <Plug>(unite_select_next_line)
+"   imap <buffer> <C-k>   <Plug>(unite_select_previous_line)
+"   imap <buffer> '     <Plug>(unite_quick_match_jump)
+"   nmap <buffer> '     <Plug>(unite_quick_match_jump)
+"   nmap <buffer> <C-j>     <Plug>(unite_toggle_auto_preview)
+" endfunction
+" " ashtneioqdwrfup;;;p;
+" let g:unite_quick_match_table = {
+"                         \ 'a' : 7, 's' : 5, 'h' : 3, 't' : 1,
+"                         \ 'n' : 2, 'e' : 4, 'i' : 6, 'o' : 8,
+"                         \ 'c' : 9, 'l' : 10,
+"                         \ 'r' : 11, 'f' : 12,
+"                         \ 'd' : 13, 'u' : 14,
+"                         \ 'g' : 15, 'k' : 16,
+"                         \}
+" endif
 " }}}
 " ------------------------------------------------------------------
 " Colorscheme Config
 " ------------------------------------------------------------------
+call denite#custom#option('default', {
+      \ 'prompt': '❯'
+      \ })
+call denite#custom#var('file_rec', 'command',
+      \ ['rg', '--files', '--glob', '!.git'])
+" call denite#custom#var('grep', 'command', ['rg'])
+" call denite#custom#var('grep', 'default_opts',
+"       \ ['--hidden', '--vimgrep', '--no-heading', '-S'])
+" call denite#custom#var('grep', 'recursive_opts', [])
+" call denite#custom#var('grep', 'pattern_opt', ['--regexp'])
+" call denite#custom#var('grep', 'separator', ['--'])
+" call denite#custom#var('grep', 'final_opts', [])
+" call denite#custom#map('insert', '<Esc>', '<denite:enter_mode:normal>',
+"       \'noremap')
+" call denite#custom#map('normal', '<Esc>', '<NOP>',
+"       \'noremap')
+" call denite#custom#map('insert', '<C-v>', '<denite:do_action:vsplit>',
+"       \'noremap')
+" call denite#custom#map('normal', '<C-v>', '<denite:do_action:vsplit>',
+"       \'noremap')
+" call denite#custom#map('normal', 'dw', '<denite:delete_word_after_caret>',
+"       \'noremap')
+" call denite#custom#source('file/rec', 'matchers', ['matcher/cpsm'])
+" call denite#custom#source('file_rec', 'matchers', ['matcher_cpsm'])
+" call denite#custom#source('file_rec', 'matchers', ['matcher_cpsm'])
+" call denite#custom#source('file_rec', 'matchers', ['matcher_cpsm'])
+call denite#custom#source('file_rec', 'sorters', ['sorter_sublime'])
 
 set termguicolors
 " use different color schemes based on available colors
@@ -430,19 +465,36 @@ nnoremap <Leader>z za
 " let g:rtagsUseDefaultMappings = 0
 " nnoremap <Leader>n :YcmCompleter GoTo<CR>
 
+" goto file using fzf.vim
+" nnoremap <Leader>gf :Files
+" " goto file in same directory
+" nnoremap <silent> <Leader>gs :Files <C-R>=expand('%:h')<CR><CR>
+
+" " goto open buffer using fzf.vim
+" nnoremap <Leader>b :Buffers
+" nnoremap <Leader>gf :DeniteProjectDir file/rec<CR>
+
+nnoremap <leader>gf :<C-u>DeniteProjectDir file/rec<CR>
+" nnoremap <leader>s :<C-u>Denite buffer<CR>
+" nnoremap <leader><Space>s :<C-u>DeniteBufferDir buffer<CR>
+" nnoremap <leader>8 :<C-u>DeniteCursorWord grep:. -mode=normal<CR>
+" nnoremap <leader>/ :<C-u>Denite grep:. -mode=normal<CR>
+" nnoremap <leader><Space>/ :<C-u>DeniteBufferDir grep:. -mode=normal<CR>
+" nnoremap <leader>d :<C-u>DeniteBufferDir file_rec<CR>
+" nnoremap <leader>r :<C-u>Denite -resume -cursor-pos=+1<CR>
+" Trash. Learn vim script   
+function NERDTreeToggleAndFind()
+  if empty(%)
+    exe NERDTreeToggle
+  else
+    exe NERDTreeToggle %
+  endif
+endfunction
 " goto alternate file using a.vim
 nnoremap <Leader>a :A<CR>
-
+" Trash, doesn't work without a current buffer
+nnoremap <Leader>t :NERDTreeToggle %<CR>
 " navigate windows
-nnoremap <Bslash>l <C-W>l
-nnoremap <Bslash>h <C-W>h
-nnoremap <Bslash>k <C-W>k
-nnoremap <Bslash>j <C-W>j
-
-" exchange windows
-nnoremap <Bslash>x <C-W>x
-" rotate
-nnoremap <Bslash>r <C-W>r
 
 "create a scratch buffer.
 function! ScratchEdit(cmd, options)
@@ -496,4 +548,4 @@ function! RangeChooser()
     redraw!
 endfunction
 command! -bar RangerChooser call RangeChooser()
-nnoremap <leader>r :<C-U>RangerChooser<CR>
+" nnoremap <leader>r :<C-U>RangerChooser<CR>
