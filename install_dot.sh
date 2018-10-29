@@ -4,7 +4,8 @@
 # This script creates symlinks from the home directory to any desired dotfiles in ~/dotfiles
 ############################
 
-files="gitconfig babunrc bashrc minttyrc vimrc zshrc oh-my-zsh vim tmux.conf fakevimrc"    # list of files/folders to symlink in homedir
+# list of files/folders to symlink in homedir
+files="gitconfig babunrc bashrc minttyrc vimrc zshrc oh-my-zsh vim tmux.conf fakevimrc"    
 
 ########## Variables
 
