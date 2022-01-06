@@ -6,38 +6,82 @@
 " compare to https://github.com/ThePrimeagen/.dotfiles/blob/master/nvim/.config/nvim/plugin/sets.vim
 "
 
+" allow switching buffers without complaining
 set hidden
+
+" tabs, spaces bla
 set expandtab
 set shiftwidth=4
 set tabstop=4
 set softtabstop=4
+
+" 
 set signcolumn=yes:2
 set number
 set termguicolors
-set spell
+
+" spell is annoying, it underlines everything in code!
+" set spell
+
+" show title of file
 set title
+
+" ignore case in patterns 
 set ignorecase
+" do not ignore case if there is something upper case in the pattern
 set smartcase
+
+" meh, seems to work fine
 set smartindent
+
+
+" should read up on wildmode, I probably want to have similar behaviour in
+" shell and vim command
 set wildmode=longest:full,full
+
 set nowrap
+
+" show tabs and trailing using listchars
 set list
 set listchars=tab:▸\ ,trail:·
+
+"  mouse mode all
 set mouse=a
+
+" when curser gets close to edge, start scrolling the view
 set scrolloff=8
 set sidescrolloff=8
+
+" this is the default setting. joinspaces adds two spaces after sentence end.
+" Yuck!
 set nojoinspaces
+
+" horizontal split creates new window on right. 
 set splitright
+
+" os clipboard goes to and from unnamed 
 set clipboard=unnamedplus
+
+" always ask for confirmation when about to overwrite or quit without saving
 set confirm
+
 set undofile
+
+
 set backup
 set backupdir=~/.local/share/nvim/backup//
-set updatetime=300 " Reduce time for highlighting other references
-set redrawtime=10000 " Allow more time for loading syntax on large files
-set nospell
 
-set nohlsearch
+
+" CursorHold and swap file creation
+set updatetime=300 " Reduce time for highlighting other references
+
+
+" set redrawtime=10000 " Allow more time for loading syntax on large files
+" default is 2000 ms
+
+set incsearch " this is actually the default
+set nohlsearch " so undecided whether to use this or not
+
 
 function! IsWsl()
   if has("unix")
@@ -50,21 +94,23 @@ function! IsWsl()
 endfunction
 
 
+" requires installing win32yank in windows
+" scoop install win32yank
+if IsWsl()
+    let g:clipboard = {
+    \    'name': 'clipfunctions',
+    \    'copy': {
+    \       '+': 'win32yank.exe -i --crlf',
+    \       '*': 'win32yank.exe -i --crlf',
+    \       },
+    \   'paste': {
+    \       '+': 'win32yank.exe -o --lf',
+    \       '*': 'win32yank.exe -o --lf',
+    \       },
+    \   'cache_enabled': 0,
+    \   }
+endif
 
- if IsWsl()
-     let g:clipboard = {
-     \    'name': 'clipfunctions',
-     \    'copy': {
-     \       '+': 'win32yank.exe -i --crlf',
-     \       '*': 'win32yank.exe -i --crlf',
-     \       },
-     \   'paste': {
-     \       '+': 'win32yank.exe -o --lf',
-     \       '*': 'win32yank.exe -o --lf',
-     \       },
-     \   'cache_enabled': 0,
-     \   }
- endif
 " set relativenumber
 " set exrc
 
@@ -124,14 +170,15 @@ Plug 'williamboman/nvim-lsp-installer'
 
 " Plug 'junegunn/goyo.vim'
 
-" " prequisite?
+" " prequisite? probably not
 " Plug 'nvim-lua/popup.nvim'
 " " prequisite
-" Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-lua/plenary.nvim'
 
-" Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope.nvim'
 " Plug 'nvim-telescope/telescope-fzy-native.nvim'
 " Plug 'jeetsukumaran/vim-filebeagle'
+"
 " Plug 'tpope/vim-vinegar'
 " Plug 'scrooloose/nerdtree'
 
@@ -139,25 +186,26 @@ Plug 'williamboman/nvim-lsp-installer'
 " Plug 'kyazdani42/nvim-tree.lua'
 " ---------- treesitter ---------
 
-" Plug 'nvim-treesitter/nvim-treesitter'
-" Plug 'nvim-treesitter/playground'
+Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'nvim-treesitter/playground'
 
 " ----------- git ---------------
 Plug 'tpope/vim-fugitive'
 
 " ----------- notes -------------
 
-" Plug 'vimwiki/vimwiki'
+Plug 'vimwiki/vimwiki'
 
 " ------------ status bar ---------------
 " all the bling
 " Plug 'bling/vim-airline'
 " Plug 'vim-airline/vim-airline-themes'
 
+" fast testing of startuptime
 " Plug 'dstein64/vim-startuptime'
 call plug#end()
 
-colorscheme gruvbox
+colorscheme gruvbox " uses community
 
 "--------------------------------------------------------------------------
 " Key maps
@@ -217,6 +265,8 @@ noremap <C-L> :nohlsearch<CR><C-L>
 " nnoremap <esc> :noh<CR><esc>
 
 " From Jess Archer. What does this do really?
+" Oh ok, it runs bdelete on all open buffers
+" so close all buffers
 nmap <leader>Q :bufdo bdelete<cr>
 
 "save file with leader
@@ -225,7 +275,7 @@ nnoremap <Leader>w :w<CR>
 nnoremap <Leader><Leader>w :wall<CR>
 
 
-"just use the clipboard
+"just use the clipboard=unnamedplus
 "
 "Copy & paste to system clipboard
 " vmap <Leader>y "+y
@@ -238,12 +288,14 @@ nnoremap <Leader><Leader>w :wall<CR>
 " vmap <Leader>P "+P
 
 " toggle fold
+" nah, just practice using folds
 " nnoremap <Leader>z za
 "
 
 " shows highlight groups
 nnoremap <silent><leader>sh :TSHighlightCapturesUnderCursor<CR>
 
+" the command above is better
 " nnoremap <leader>sh :call <SID>SynStack()<CR>
 " function! <SID>SynStack()
 "   if !exists("*synstack")
@@ -252,6 +304,7 @@ nnoremap <silent><leader>sh :TSHighlightCapturesUnderCursor<CR>
 "   echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 " endfunc
 
+" move to treesitter.lua
 " lua <<EOF
 " require'nvim-treesitter.configs'.setup {
 "   -- One of "all", "maintained" (parsers with maintainers), or a list of languages
