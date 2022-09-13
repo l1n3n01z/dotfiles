@@ -11,10 +11,18 @@ set hidden
 
 " tabs, spaces bla
 set expandtab
-set shiftwidth=4
+" hmmmm this is maybe not the best
 set tabstop=4
 set softtabstop=4
+set shiftwidth=4
 
+function! s:setAltPrefs()
+    set tabstop=2
+    set softtabstop=2
+    set shiftwidth=2
+endfunction
+
+autocmd FileType xml,html,xhtml,javascript call s:setAltPrefs()
 " 
 set signcolumn=yes:2
 set number
@@ -33,7 +41,6 @@ set smartcase
 
 " meh, seems to work fine
 set smartindent
-
 
 " should read up on wildmode, I probably want to have similar behaviour in
 " shell and vim command
@@ -177,6 +184,8 @@ Plug 'nvim-lua/plenary.nvim'
 
 Plug 'nvim-telescope/telescope.nvim'
 " Plug 'nvim-telescope/telescope-fzy-native.nvim'
+"
+" deprecated
 " Plug 'jeetsukumaran/vim-filebeagle'
 "
 " Plug 'tpope/vim-vinegar'
@@ -193,8 +202,9 @@ Plug 'nvim-treesitter/playground'
 Plug 'tpope/vim-fugitive'
 
 " ----------- notes -------------
-
-Plug 'vimwiki/vimwiki'
+" note, using dev to support files with dot in name
+" see https://github.com/vimwiki/vimwiki/issues/1177
+Plug 'vimwiki/vimwiki', { 'branch': 'dev'}
 
 " ------------ status bar ---------------
 " all the bling
@@ -203,9 +213,20 @@ Plug 'vimwiki/vimwiki'
 
 " fast testing of startuptime
 " Plug 'dstein64/vim-startuptime'
+
+" ----------- open in browsers and stuff ---
+Plug 'felipec/vim-sanegx' " gx is broken in wsl, this is a simple fix and is cross platform
+
 call plug#end()
 
+let $BASH_ENV = '~/.bashrc' " this is safe as bashrc check for non-interacive shell before doing stuff
+
 colorscheme gruvbox " uses community
+
+if IsWsl()
+    " use hacked wslview, which opens regular https urls directly in firefox
+    let g:netrw_browsex_viewer = 'wsl-open'
+endif
 
 "--------------------------------------------------------------------------
 " Key maps
@@ -304,108 +325,10 @@ nnoremap <silent><leader>sh :TSHighlightCapturesUnderCursor<CR>
 "   echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 " endfunc
 
-" move to treesitter.lua
-" lua <<EOF
-" require'nvim-treesitter.configs'.setup {
-"   -- One of "all", "maintained" (parsers with maintainers), or a list of languages
-"   ensure_installed = { "c_sharp" },
 
-"   -- Install languages synchronously (only applied to `ensure_installed`)
-"   sync_install = false,
+" todo add a nice treesitter.lua
 
-"   -- List of parsers to ignore installing
-"   ignore_install = { "javascript" },
-
-"   highlight = {
-"     -- `false` will disable the whole extension
-"     enable = true,
-
-"     -- list of language that will be disabled
-"     disable = { "c", "rust" },
-
-"     -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-"     -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-"     -- Using this option may slow down your editor, and you may see some duplicate highlights.
-"     -- Instead of true it can also be a list of languages
-"     additional_vim_regex_highlighting = false,
-"   },
-" }
-" EOF
-
-" --snippet = {
-" --    expand = function(args)
-"     vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-"     -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-"     -- require'snippy'.expand_snippet(args.body) -- For `snippy` users.
-"     -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
-" end,
-  " { name = 'vsnip' }, -- For vsnip users.
-  " -- { name = 'luasnip' }, -- For luasnip users.
-  " -- { name = 'snippy' }, -- For snippy users.
-  " -- { name = 'ultisnips' }, -- For ultisnips users.
-  " }, {
-" },
-
-" are we doing this twice?
-" lua <<EOF
-" local cmp = require'cmp'
-" -- Global setup.
-" cmp.setup({
-"     mapping = {
-"         ['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
-"         ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
-"         ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
-"         ['<C-e>'] = cmp.mapping({
-"             i = cmp.mapping.abort(),
-"             c = cmp.mapping.close(),
-"         }),
-"         -- Accept currently selected item. If none selected, `select` first item.
-"         -- Set `select` to `false` to only confirm explicitly selected items.
-"         ['<CR>'] = cmp.mapping.confirm({ select = true }),
-"     },
-"     sources = cmp.config.sources({
-"         { name = 'nvim_lsp' },
-"         { name = 'buffer' },
-"     })
-" })
-" -- `/` cmdline setup.
-" cmp.setup.cmdline('/', {
-"     sources = {
-"         { name = 'buffer' }
-"     }
-" })
-" -- `:` cmdline setup.
-" cmp.setup.cmdline(':', {
-"     sources = cmp.config.sources({
-"         { name = 'path' }
-"     }, {
-"         { name = 'cmdline' }
-"     })
-" })
-" -- Setup lspconfig.
-" local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
-" local pid = vim.fn.getpid()
-" -- On linux/darwin if using a release build, otherwise under scripts/OmniSharp(.Core)(.cmd)
-" local omnisharp_bin = "/home/nonni/.local/share/nvim/lsp_servers/omnisharp/omnisharp/run"
-" -- on Windows
-" -- local omnisharp_bin = "/path/to/omnisharp/OmniSharp.exe"
-" require('lspconfig').omnisharp.setup {
-"     capabilities = capabilities,
-"     cmd = { omnisharp_bin, "--languageserver" , "--hostPID", tostring(pid) },
-" }
-" EOF
-
-" let wiki_1 = {}
-" let wiki_1.path = '~/vimwiki/'
-" let wiki_1.syntax = 'markdown'
-" let wiki_1.ext = '.md'
-
-" let g:vimwiki_list = [wiki_1]
-" let g:vimwiki_ext2syntax = {'.md': 'markdown', '.markdown': 'markdown', '.mdown': 'markdown'}
-" let g:vimwiki_global_ext = 0
-
-
-" nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
-" nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
-" nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
-" nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
+nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
+nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
+nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
+nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
