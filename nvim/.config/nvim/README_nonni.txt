@@ -70,3 +70,19 @@ Instead of updating daily/weekly etc.. I recommend keeping your config stable an
     pin your commits when your config is working without bugs and
     Install Neovim from source so that it doesn't update when you update packages using your package manager.
 
+===============================
+Version info for currently installed neovim
+-------------------------------
+
+NVIM v0.8.0-dev-1081-g907fc8ac3
+Build type: Release
+LuaJIT 2.1.0-beta3
+Compiled by nonni@ORI0119
+
+Features: +acl +iconv +tui
+See ":help feature-compile"
+
+   system vimrc file: "$VIM/sysinit.vim"
+  fall-back for $VIM: "/usr/local/share/nvim"
+
+Run :checkhealth for more info
