@@ -53,8 +53,8 @@ packer.init {
 -- Install your plugins here
 return packer.startup(function(use)
   -- My plugins here
-  use { "wbthomason/packer.nvim", commit = "" } -- Have packer manage itself
-  use { "nvim-lua/plenary.nvim", commit = "" } -- Useful lua functions used by lots of plugins
+  use { "wbthomason/packer.nvim" } -- Have packer manage itself
+  use { "nvim-lua/plenary.nvim" } -- Useful lua functions used by lots of plugins
   use { 
     "numToStr/Comment.nvim", 
     commit = "", 
@@ -63,35 +63,35 @@ return packer.startup(function(use)
       require('Comment').setup()
     end 
   }
---  use { "kyazdani42/nvim-web-devicons", commit = "" }
---  use { "kyazdani42/nvim-tree.lua", commit = "" }
---  use { "akinsho/bufferline.nvim", commit = "" }
---  use { "nvim-lualine/lualine.nvim", commit = "" }
---  use { "lewis6991/impatient.nvim", commit = "" }
+--  use { "kyazdani42/nvim-web-devicons" }
+--  use { "kyazdani42/nvim-tree.lua" }
+--  use { "akinsho/bufferline.nvim" }
+--  use { "nvim-lualine/lualine.nvim" }
+--  use { "lewis6991/impatient.nvim" }
 
   -- Colorschemes
---  use { "folke/tokyonight.nvim", commit = "" }
---  use { "lunarvim/darkplus.nvim", commit = "" }
+--  use { "folke/tokyonight.nvim" }
+--  use { "lunarvim/darkplus.nvim" }
 
   -- cmp plugins
---  use { "hrsh7th/nvim-cmp", commit = "" } -- The completion plugin
---  use { "hrsh7th/cmp-buffer", commit = "" } -- buffer completions
---  use { "hrsh7th/cmp-path", commit = "" } -- path completions
---  use { "saadparwaiz1/cmp_luasnip", commit = "" } -- snippet completions
---  use { "hrsh7th/cmp-nvim-lsp", commit = "" }
---  use { "hrsh7th/cmp-nvim-lua", commit = "" }
+  use { "hrsh7th/nvim-cmp" } -- The completion plugin
+  use { "hrsh7th/cmp-buffer" } -- buffer completions
+  use { "hrsh7th/cmp-path" } -- path completions
+  use { "saadparwaiz1/cmp_luasnip" } -- snippet completions
+--  use { "hrsh7th/cmp-nvim-lsp" }
+--  use { "hrsh7th/cmp-nvim-lua" }
 
   -- snippets
---  use { "L3MON4D3/LuaSnip", commit = "" } --snippet engine
---  use { "rafamadriz/friendly-snippets", commit = "" } -- a bunch of snippets to use
+  use { "L3MON4D3/LuaSnip" } --snippet engine
+  use { "rafamadriz/friendly-snippets" } -- a bunch of snippets to use
 
   -- LSP
---  use { "neovim/nvim-lspconfig", commit = "" } -- enable LSP
---  use { "williamboman/nvim-lsp-installer", commit = "" } -- simple to use language server installer
---  use { "jose-elias-alvarez/null-ls.nvim", commit = "" } -- for formatters and linters
+--  use { "neovim/nvim-lspconfig" } -- enable LSP
+--  use { "williamboman/nvim-lsp-installer" } -- simple to use language server installer
+--  use { "jose-elias-alvarez/null-ls.nvim" } -- for formatters and linters
 
   -- Telescope
---  use { "nvim-telescope/telescope.nvim", commit = "" }
+--  use { "nvim-telescope/telescope.nvim" }
 
   -- Treesitter
 --  use {
@@ -99,9 +99,9 @@ return packer.startup(function(use)
 --  }
 
   -- DAP
---  use { "mfussenegger/nvim-dap", commit = "" }
---  use { "rcarriga/nvim-dap-ui", commit = "" }
---  use { "ravenxrz/DAPInstall.nvim", commit = "" }
+--  use { "mfussenegger/nvim-dap" }
+--  use { "rcarriga/nvim-dap-ui" }
+--  use { "ravenxrz/DAPInstall.nvim" }
 
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
