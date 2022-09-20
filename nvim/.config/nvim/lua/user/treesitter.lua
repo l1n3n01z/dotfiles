@@ -4,7 +4,11 @@ if not status_ok then
 end
 
 configs.setup({
-	ensure_installed = "all", -- one of "all" or a list of languages
+  -- startup is much faster if we don't specify all. Unsure why there is an impact
+  -- goes from 300 ms for treesitter start to a couple of ms
+  -- possibly specifying explicitly a huge list is faster than all?
+	ensure_installed = { "c_sharp", "lua" },  -- one of "all" or a list of languages
+	-- ensure_installed = "all",  -- one of "all" or a list of languages
 	ignore_install = { "" }, -- List of parsers to ignore installing
 	highlight = {
 		enable = true, -- false will disable the whole extension
