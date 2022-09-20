@@ -43,7 +43,7 @@ local join_paths = putil.join_paths
 packer.init {
   display = {
     open_fn = function()
-      return require("packer.util").float { border = "rounded" }
+      return putil.float { border = "rounded" }
     end,
   },
   snapshot_path = join_paths(fn.stdpath("config"), 'packer.nvim'),
@@ -70,8 +70,8 @@ return packer.startup(function(use)
 --  use { "lewis6991/impatient.nvim" }
 
   -- Colorschemes
---  use { "folke/tokyonight.nvim" }
---  use { "lunarvim/darkplus.nvim" }
+ use { "folke/tokyonight.nvim" }
+ use { "lunarvim/darkplus.nvim" }
 
   -- cmp plugins
   use { "hrsh7th/nvim-cmp" } -- The completion plugin
@@ -94,9 +94,7 @@ return packer.startup(function(use)
 --  use { "nvim-telescope/telescope.nvim" }
 
   -- Treesitter
---  use {
---    "nvim-treesitter/nvim-treesitter"
---  }
+--  use { "nvim-treesitter/nvim-treesitter" }
 
   -- DAP
 --  use { "mfussenegger/nvim-dap" }
