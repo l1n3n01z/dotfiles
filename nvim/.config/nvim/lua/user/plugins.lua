@@ -1,5 +1,5 @@
 local fn = vim.fn
-local snapshot_name = "b4cmp"
+local snapshot_name = "cmp_nv08_g907fc8ac3"
 
 -- Automatically install packer
 -- Consider not doing this on remote systems?
