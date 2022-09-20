@@ -94,7 +94,8 @@ return packer.startup(function(use)
 --  use { "nvim-telescope/telescope.nvim" }
 
   -- Treesitter
---  use { "nvim-treesitter/nvim-treesitter" }
+ use { "nvim-treesitter/nvim-treesitter" }
+ use { "nvim-treesitter/playground" } -- Please do TSInstall query if it's not automatically installed
 
   -- DAP
 --  use { "mfussenegger/nvim-dap" }
