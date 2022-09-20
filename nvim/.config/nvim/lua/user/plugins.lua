@@ -1,4 +1,5 @@
 local fn = vim.fn
+local snapshot_name = "b4cmp"
 
 -- Automatically install packer
 -- Consider not doing this on remote systems?
@@ -30,14 +31,23 @@ if not status_ok then
   vim.notify("Packer not available")
   return
 end
+local status_ok, putil = pcall(require, "packer.util")
+if not status_ok then
+  vim.notify("Packer util not available")
+  return
+end
+local join_paths = putil.join_paths
 
 -- Have packer use a popup window
+-- Use snapshots
 packer.init {
   display = {
     open_fn = function()
       return require("packer.util").float { border = "rounded" }
     end,
   },
+  snapshot_path = join_paths(fn.stdpath("config"), 'packer.nvim'),
+  snapshot = snapshot_name,
 }
 
 -- Install your plugins here
