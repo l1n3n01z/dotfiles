@@ -1,7 +1,7 @@
 require "user.options"
 require "user.keymaps"
 require "user.system"
---require "user.plugins"
+require "user.plugins"
 --require "user.autocommands"
 --require "user.colorscheme"
 --require "user.cmp"
