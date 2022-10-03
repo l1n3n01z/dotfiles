@@ -96,6 +96,8 @@ return packer.startup(function(use)
  use { "nvim-treesitter/nvim-treesitter" }
  use { "nvim-treesitter/playground" } -- Please do TSInstall query if it's not automatically installed
 
+  -- Motions
+  use { "ggandor/leap.nvim" }
   -- DAP
 --  use { "mfussenegger/nvim-dap" }
 --  use { "rcarriga/nvim-dap-ui" }
