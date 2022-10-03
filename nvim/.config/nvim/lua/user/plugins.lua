@@ -1,5 +1,5 @@
 local fn = vim.fn
-local snapshot_name = "lsp_nv08_g907fc8ac3"
+local snapshot_name = "nvim_rel0.8"
 
 -- Automatically install packer
 -- Consider not doing this on remote systems?
