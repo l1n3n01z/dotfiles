@@ -59,7 +59,17 @@ TREE
 │       └── treesitter.lua
 └── README.md
 
+==============================
+How to reinstall from source
+------------------------------
 
+just rebuild and install
+git pull
+make distclean && make CMAKE_BUILD_TYPE=Release
+sudo make install
+nvim -v
+
+------------------------------
 
 Stability
 
@@ -74,7 +84,7 @@ Instead of updating daily/weekly etc.. I recommend keeping your config stable an
 Version info for currently installed neovim
 -------------------------------
 
-NVIM v0.8.0-dev-1081-g907fc8ac3
+NVIM v0.8.0-1-g9e784a53b
 Build type: Release
 LuaJIT 2.1.0-beta3
 Compiled by nonni@ORI0119
