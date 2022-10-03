@@ -11,6 +11,7 @@ local servers = {
   "bashls",
   "jsonls",
   "yamlls",
+  -- "omnisharp",
   "csharp_ls"
 }
 

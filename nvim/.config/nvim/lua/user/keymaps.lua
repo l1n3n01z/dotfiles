@@ -1,3 +1,5 @@
+-- there are default keymap for comment.nvim but they replicate tim popes excellent commentary keymaps
+-- there are more keymaps in "../user/lsp/handlers.lua"
 -- Shorten function name
 local keymap = vim.keymap.set
 -- Silent keymap option

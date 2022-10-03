@@ -1,5 +1,5 @@
 local fn = vim.fn
-local snapshot_name = "cmp_nv08_g907fc8ac3"
+local snapshot_name = "lsp_nv08_g907fc8ac3"
 
 -- Automatically install packer
 -- Consider not doing this on remote systems?
@@ -65,9 +65,8 @@ return packer.startup(function(use)
   }
  use { "kyazdani42/nvim-web-devicons" }
  use { "kyazdani42/nvim-tree.lua" }
---  use { "akinsho/bufferline.nvim" }
---  use { "nvim-lualine/lualine.nvim" }
- -- use { "lewis6991/impatient.nvim" }
+ use { "nvim-lualine/lualine.nvim" }
+ use { "lewis6991/impatient.nvim" }
 
   -- Colorschemes
  use { "folke/tokyonight.nvim" }
@@ -79,7 +78,7 @@ return packer.startup(function(use)
   use { "hrsh7th/cmp-path" } -- path completions
   use { "saadparwaiz1/cmp_luasnip" } -- snippet completions
   use { "hrsh7th/cmp-nvim-lsp" }
---  use { "hrsh7th/cmp-nvim-lua" }
+  use { "hrsh7th/cmp-nvim-lua" }
 
   -- snippets
   use { "L3MON4D3/LuaSnip" } --snippet engine
