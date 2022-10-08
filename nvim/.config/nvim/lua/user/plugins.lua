@@ -70,6 +70,7 @@ return packer.startup(function(use)
 
   -- Colorschemes
  use { "folke/tokyonight.nvim" }
+ use { "gruvbox-community/gruvbox" }
  use { "lunarvim/darkplus.nvim" }
 
   -- cmp plugins
