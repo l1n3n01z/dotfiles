@@ -62,8 +62,16 @@ keymap("n", "<leader>e", ":NvimTreeToggle<CR>", opts)
 -- Telescope
 keymap("n", "<leader>ff", ":Telescope find_files<CR>", opts)
 keymap("n", "<leader>ft", ":Telescope live_grep<CR>", opts)
+keymap("n", "<leader>fw", ":Telescope grep_string<CR>", opts)
 keymap("n", "<leader>fp", ":Telescope projects<CR>", opts)
 keymap("n", "<leader>fb", ":Telescope buffers<CR>", opts)
+
+-- note a better version of visual selection can be found here
+-- https://github.com/fdschmidt93/dotfiles/tree/master/nvim/.config/nvim/lua/fds/utils
+keymap("x", "<leader>ft", function ()
+  local cmds = require("user.commands")
+  cmds.telescope_my_grep()
+end, opts)
 
 -- Git
 keymap("n", "<leader>gg", "<cmd>lua _LAZYGIT_TOGGLE()<CR>", opts)
