@@ -40,5 +40,15 @@ for _, server in pairs(servers) do
     opts = vim.tbl_deep_extend("force", pyright_opts, opts)
   end
 
+  if server == "csharp_ls" then
+    local csharp_ls_opts = require "user.lsp.settings.csharp_ls"
+    opts = vim.tbl_deep_extend("force", csharp_ls_opts, opts)
+  end
+
+  if server == "omnisharp" then
+    local omnisharp_opts = require "user.lsp.settings.omnisharp"
+    opts = vim.tbl_deep_extend("force", omnisharp_opts, opts)
+  end
+
   lspconfig[server].setup(opts)
 end
