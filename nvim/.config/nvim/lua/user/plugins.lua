@@ -85,9 +85,12 @@ return packer.startup(function(use)
   use { "L3MON4D3/LuaSnip" } --snippet engine
   use { "rafamadriz/friendly-snippets" } -- a bunch of snippets to use
 
+  use { "williamboman/mason.nvim" } -- binary installer for lsp and dap
+
   -- LSP
   use { "neovim/nvim-lspconfig" } -- enable LSP
-  use { "williamboman/nvim-lsp-installer" } -- simple to use language server installer
+  use { "williamboman/mason-lspconfig.nvim" } -- simple to use language server installer
+
   use { "jose-elias-alvarez/null-ls.nvim" } -- for formatters and linters
   use { "folke/lua-dev.nvim" }
   use { "weilbith/nvim-code-action-menu" }
@@ -101,10 +104,13 @@ return packer.startup(function(use)
 
   -- Motions
   use { "ggandor/leap.nvim" }
+
   -- DAP
---  use { "mfussenegger/nvim-dap" }
---  use { "rcarriga/nvim-dap-ui" }
---  use { "ravenxrz/DAPInstall.nvim" }
+ use { "mfussenegger/nvim-dap" }
+ use { "rcarriga/nvim-dap-ui" }
+ use { "~/mason-nvim-dap-local" }
+ -- use { "jayp0521/mason-nvim-dap.nvim" } -- simple to use language server installer
+ -- use { "jayp0521/mason-nvim-dap.nvim" } -- simple to use language server installer
 
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
