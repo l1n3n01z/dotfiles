@@ -68,6 +68,8 @@ return packer.startup(function(use)
  use { "nvim-lualine/lualine.nvim" }
  use { "lewis6991/impatient.nvim" }
 
+-- see https://github.com/vimwiki/vimwiki/issues/1177
+ use { 'vimwiki/vimwiki', branch = 'dev' }
   -- Colorschemes
  use { "folke/tokyonight.nvim" }
  use { "gruvbox-community/gruvbox" }
