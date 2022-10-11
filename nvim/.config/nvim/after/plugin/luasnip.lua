@@ -10,8 +10,6 @@ local i = ls.insert_node
 
 local rep = require("luasnip.extras").rep
 
-print("HERE")
-
 ls.snippets = {
   all = {},
   cs = {

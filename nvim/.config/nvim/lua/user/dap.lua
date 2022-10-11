@@ -19,7 +19,6 @@ mason_dap_install.setup({
 
 mason_dap_install.setup_handlers {
   function(source_name)
-    print("Inside dap source" .. source_name)
     -- all sources with no handler get passed here
   end,
   -- add other configs here
