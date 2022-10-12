@@ -5,7 +5,6 @@
 # scope with a bunch of identifiers.
 # for profiling
 # zmodload zsh/zprof
-typeset -A __NONNI
 # GNU and BSD (macOS) ls flags aren't compatible
 ls --version &>/dev/null
 if [ $? -eq 0 ]; then
@@ -87,37 +86,11 @@ bindkey ' '  magic-space
 
 autoload -U add-zsh-hook
 
-# Remember each command we run.
-function -record-command() {
-  __NONNI[LAST_COMMAND]="$2"
-}
-
-# preexec runs after enter, before actually running
-add-zsh-hook preexec -record-command
-
 function nonni_git_status() {
   nonni_git_info_msg_="sdf"
 }
-# Update vcs_info (slow) after any command that probably changed it.
-function -maybe-show-vcs-info() {
-  local LAST="$__NONNI[LAST_COMMAND]"
 
-  # In case user just hit enter, overwrite LAST_COMMAND, because preexec
-  # won't run and it will otherwise linger.
-  __NONNI[LAST_COMMAND]="<unset>"
-
-  # Check first word; via:
-  # http://tim.vanwerkhoven.org/post/2012/10/28/ZSH/Bash-string-manipulation
-  case "$LAST[(w)1]" in
-    cd|cp|git|rm|touch|mv)
-      nonni_git_status
-      ;;
-    *)
-      ;;
-  esac
-}
-
-add-zsh-hook precmd nonni_git_status
+# add-zsh-hook precmd nonni_git_status
 #
 # Prompt
 #
