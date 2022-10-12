@@ -30,8 +30,8 @@ alias gs="git status 2>/dev/null"
 # function gc() { git clone ssh://git@github.com/"$*" }
 # function gg() { git commit -m "$*" }
 
-# Maybe more suitable for .zshenv
-EDITOR=vim
+# TODO start a lighter version of nvim
+EDITOR=nvim
 PROMPT='%n@%m %3~%(!.#.$)%(?.. [%?]) '
 
 # Having APPDATA set in WSL will wreak havoc with at lot of dotnet stuff
