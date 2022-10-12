@@ -53,3 +53,5 @@ path=("$HOME/.local/bin" $path)
 # PATH
 typeset -U path                 # keep duplicates out of the path
 
+# this prevents compinit running in /etc/zsh/zshrc  
+skip_global_compinit=1
