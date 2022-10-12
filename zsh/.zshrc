@@ -65,7 +65,9 @@ mkdir -p "$XDG_CACHE_HOME"/zsh
 # zstyle ':completion:*' cache-path $XDG_CACHE_HOME/zsh/zcompcache
 
 # Tab completion
-autoload -Uz compinit && compinit -d "$XDG_CACHE_HOME"/zsh/zcompdump-$ZSH_VERSION
+export ZSH_COMPDUMP_DIR="$XDG_CACHE_HOME"/zsh
+export ZSH_COMPDUMP="$ZSH_COMPDUMP_DIR"/zcompdump-$ZSH_VERSION
+autoload -Uz compinit && compinit -d "$ZSH_COMPDUMP"
 setopt complete_in_word         # cd /ho/sco/tm<TAB> expands to /home/scott/tmp
 setopt auto_menu                # show completion menu on succesive tab presses
 setopt autocd                   # cd to a folder just by typing it's name
