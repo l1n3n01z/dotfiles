@@ -1,0 +1,3 @@
+Note, XDG_CONFIG_HOME requires tmux 3.1
+Just copy your tmux conf to ~ if you have a lower version
+
