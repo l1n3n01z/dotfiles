@@ -1,0 +1,2 @@
+# this file should be named .zshenv and live in the home directory
+source ~/.config/zsh/.zshenv
