@@ -68,9 +68,16 @@
   #  /etc/profiles/per-user/nonni/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
-    # EDITOR = "emacs";
+    EDITOR = "nvim";
   };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
+  programs.fish.enable = true;
+  programs.neovim = {
+	  enable = true;
+	  viAlias = true;
+	  vimAlias = true;
+  };
+  programs.gitui.enable = true;
 }
