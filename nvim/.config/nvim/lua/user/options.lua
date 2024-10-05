@@ -39,3 +39,6 @@ vim.opt.shortmess:append "c"
 vim.opt.whichwrap:append("<,>,[,],h,l")
 vim.opt.iskeyword:append("-")
 vim.o.winbar = "%f"
+
+vim.g.omni_sql_default_compl_type = 'syntax'
+vim.g.tmuxjump_telescope = true

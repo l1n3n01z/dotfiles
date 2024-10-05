@@ -59,7 +59,9 @@ mason_dap_install.setup_handlers {
         --   return vim.fn.input('Path to dll', vim.fn.getcwd() .. '/bin/Debug/', 'file')
         -- end,
         -- program = "dotnet run --project /home/nonni/work/shipment_delivery/src/api/apexinfo/Origo.ApexService/Origo.ApexService.csproj"
-        program = "/home/nonni/work/shipment_delivery/src/api/apexinfo/Origo.ApexService/bin/Debug/netcoreapp3.1/Origo.ApexService.dll"
+        program = "/home/nonni/work/shipment_delivery/src/api/workflowservice/Origo.OrderDelivery.Rest/bin/Debug/netcoreapp3.1/Origo.OrderDelivery.Rest.dll",
+        cwd = "/home/nonni/work/shipment_delivery/src/api/workflowservice/Origo.OrderDelivery.Rest/bin/Debug/netcoreapp3.1/",
+        args = {"local"}
       }
     }
   end,

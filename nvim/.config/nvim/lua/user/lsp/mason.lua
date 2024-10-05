@@ -1,5 +1,7 @@
 local servers = {
-	"sumneko_lua",
+	"lua_ls",
+	-- "sqls",
+	-- "sqlls",
 	-- "cssls",
 	-- "html",
 	-- "tsserver",
@@ -8,6 +10,8 @@ local servers = {
 	-- "jsonls",
 	"yamlls",
   "csharp_ls",
+  "jdtls",
+  "fsautocomplete",
 }
 
 local settings = {

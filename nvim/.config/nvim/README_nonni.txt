@@ -52,7 +52,7 @@ TREE
 │       │   ├── null-ls.lua
 │       │   └── settings
 │       │       ├── pyright.lua
-│       │       └── sumneko_lua.lua
+│       │       └── sumneko_lua.lua //renamed to lua_ls
 │       ├── options.lua
 │       ├── plugins.lua
 │       ├── telescope.lua

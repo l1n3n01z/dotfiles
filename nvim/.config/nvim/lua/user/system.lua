@@ -1,10 +1,3 @@
--- NO LONGER NEEDED. neovim supports has('wsl')
---
---local function check_wsl () 
---  if not (vim.fn.has('unix')) then return false end
---  return os.getenv("WSL_INTEROP") ~= nil
---end
-
 -- explicit setting the clipboard reduces startup time by 500 ms. 
 -- Clip.exe seems to have the least latency
 -- If we want better performance we are going to have to write a server queue for the clipboard
@@ -12,8 +5,10 @@ if (vim.fn.has('wsl')) then
   vim.g.clipboard = {
     name = "clipfunctions",
     copy = {
-      ["+"] = "clip.exe",
-      ["*"] = "clip.exe"
+      ["+"] = "win32yank.exe -i",
+      ["*"] = "win32yank.exe -i"
+      -- ["*"] = "clip.exe"
+      -- ["+"] = "clip.exe",
     },
     paste = {
       ["+"] = "win32yank.exe -o --lf",

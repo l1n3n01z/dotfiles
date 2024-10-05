@@ -1,5 +1,6 @@
 local fn = vim.fn
-local snapshot_name = "latest"
+local snapshot_name = "nvim_09_dev_19_apr_2023"
+--local snapshot_name = "latest"
 
 -- Automatically install packer
 -- Consider not doing this on remote systems?
@@ -55,13 +56,13 @@ return packer.startup(function(use)
   -- My plugins here
   use { "wbthomason/packer.nvim" } -- Have packer manage itself
   use { "nvim-lua/plenary.nvim" } -- Useful lua functions used by lots of plugins
-  use { 
-    "numToStr/Comment.nvim", 
-    commit = "", 
+  use {
+    "numToStr/Comment.nvim",
+    commit = "",
     -- if we set up new keymaps, use a file to config
-    config = function() 
+    config = function()
       require('Comment').setup()
-    end 
+    end
   }
  use { "kyazdani42/nvim-web-devicons" }
  use { "kyazdani42/nvim-tree.lua" }
@@ -93,12 +94,21 @@ return packer.startup(function(use)
   use { "neovim/nvim-lspconfig" } -- enable LSP
   use { "williamboman/mason-lspconfig.nvim" } -- simple to use language server installer
 
+  -- LSP languages
+  use { "nanotee/sqls.nvim" }
   use { "jose-elias-alvarez/null-ls.nvim" } -- for formatters and linters
   use { "folke/lua-dev.nvim" }
   use { "weilbith/nvim-code-action-menu" }
 
+  -- Csharp decompilation extra
+  use { "Decodetalkers/csharpls-extended-lsp.nvim"}
+
   -- Telescope
  use { "nvim-telescope/telescope.nvim" }
+
+  -- Telescope plugins
+ use { "camgraff/telescope-tmux.nvim" }
+
 
   -- Treesitter
  use { "nvim-treesitter/nvim-treesitter" }
@@ -111,6 +121,9 @@ return packer.startup(function(use)
  use { "mfussenegger/nvim-dap" }
  use { "rcarriga/nvim-dap-ui" }
  use { "~/mason-nvim-dap-local" }
+
+ -- TMUX
+ use { "shivamashtikar/tmuxjump.vim" } -- parses neighbouring panes for error output
  -- use { "jayp0521/mason-nvim-dap.nvim" } -- simple to use language server installer
  -- use { "jayp0521/mason-nvim-dap.nvim" } -- simple to use language server installer
 
