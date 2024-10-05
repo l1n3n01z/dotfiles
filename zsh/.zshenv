@@ -44,12 +44,19 @@ fi
 # path
 # this removes the windows paths.
 # unfortunately it disables a few things like win32yank
-# path=( ${path[@]:#/mnt/c/*} )
+# so we add a few select paths in
+# remove window paths
+path=( ${path[@]:#/mnt/c/*} )
 path=('/opt/mssql-tools/bin' $path)
 path=("$HOME/.cargo/bin" $path)
 path=("$HOME/.poetry/bin" $path)
 path=("$HOME/.local/bin" $path)
 
+# windows stuff goes at the end, please
+# add clip.exe and other system32 stuff 
+path=( $path "/mnt/c/WINDOWS/system32" )
+# add win32yank.exe
+path=( $path "/mnt/c/Users/ori.jont/scoop/shims")
 # PATH
 typeset -U path                 # keep duplicates out of the path
 

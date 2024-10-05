@@ -3,8 +3,10 @@
 # Raw file:  curl -L git.io/sensible-zshrc
 # Create a hash table for globally stashing variables without polluting main
 # scope with a bunch of identifiers.
+
 # for profiling
 # zmodload zsh/zprof
+
 # GNU and BSD (macOS) ls flags aren't compatible
 ls --version &>/dev/null
 if [ $? -eq 0 ]; then
@@ -14,6 +16,11 @@ else
   export CLICOLOR=1
 fi
 
+# TODO
+# set title to something nice after wsl fucks it up
+
+
+# TODO move to special file
 # Aliases
 alias ls="ls ${lsflags}"
 alias ll="ls ${lsflags} -l"
@@ -29,6 +36,9 @@ alias gd="git diff"
 alias gs="git status 2>/dev/null"
 # function gc() { git clone ssh://git@github.com/"$*" }
 # function gg() { git commit -m "$*" }
+
+# Functions
+source $ZDOTDIR/my_functions.zsh
 
 # TODO start a lighter version of nvim
 EDITOR=nvim
@@ -90,6 +100,14 @@ function nonni_git_status() {
   nonni_git_info_msg_="sdf"
 }
 
+function set_title() {
+  # sets the title to more or less the same thing as the prompt
+  local title="${SSH_TTY:+%n@%m}${SSH_TTY:+:}%1~%(1j.*.)%(?..!)"
+  local title=$(print -P "$title")
+  echo -n "\033]0;${title}\007"
+}
+
+add-zsh-hook precmd set_title
 # add-zsh-hook precmd nonni_git_status
 #
 # Prompt
@@ -120,6 +138,8 @@ function () {
   fi
   local SUFFIX='%(!.%F{yellow}%n%f.)%(!.%F{yellow}.%F{red})'$(printf '\u276f%.0s' {1..$LVL})'%f'
 
+  # https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html#Prompt-Expansion
+  # %n username
   export PS1="%F{green}${SSH_TTY:+%n@%m}%f%B${SSH_TTY:+:}%b%F{blue}%B%1~%b%F{yellow}%B%(1j.*.)%(?..!)%b%f %B${SUFFIX}%b "
   if [[ -n "$TMUXING" ]]; then
     # Outside tmux, ZLE_RPROMPT_INDENT ends up eating the space after PS1, and
@@ -135,8 +155,7 @@ export SPROMPT="zsh: correct %F{red}'%R'%f to %F{red}'%r'%f [%B%Uy%u%bes, %B%Un%
 # export NVM_DIR="$HOME/.nvm"
 # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 # [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-# export JIRA_API_TOKEN=MTE0NzkwNjg1OTYyOlwRgehCqO6ekLW2irRwnClZh903
-# export JIRA_AUTH_TYPE=bearer
+# removed non-working jira and git was complaining
 
 # eval "$(fasd --init auto)"
 
@@ -145,3 +164,6 @@ export SPROMPT="zsh: correct %F{red}'%R'%f to %F{red}'%r'%f [%B%Uy%u%bes, %B%Un%
 [ -f ~/.config/zsh/zoxide_functions.zsh ] && source ~/.config/zsh/zoxide_functions.zsh
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 # zprof
+
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" --no-use # This loads nvm
