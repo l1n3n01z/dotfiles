@@ -1,0 +1,1 @@
+/home/nonni/.fzf/shell/key-bindings.fish
