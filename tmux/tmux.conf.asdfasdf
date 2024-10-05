@@ -7,28 +7,30 @@
 # can we do this once on login shell?
 # note does not work in fish
 # run-shell "tmux setenv -g TMUX_VERSION $(tmux -V | cut -d' ' -f2 | sed 's/[a-z]//')"
-# set -g default-terminal "screen-256color"
-# if 'infocmp -x tmux-256color > /dev/null 2>&1' 'set -g default-terminal "tmux-256color"'
-# this seems to work fine for 24 bit color in tmux
-set -g default-terminal "screen-256color"
-set -ag terminal-overrides ",xterm-256color:RGB"
+
+# -- this is ok, but possibly not needed
+## set -g default-terminal "screen-256color"
+## if 'infocmp -x tmux-256color > /dev/null 2>&1' 'set -g default-terminal "tmux-256color"'
+
 # set -as terminal-features 'contour:sixel'
 # set -as terminal-overrides '*:Sync@'
 # set -as terminal-overrides ',*:Sxl' # sixel support
 
 # play well with vim escape key
 set -s escape-time 0
+# set -s escape-time 10
+# set -s escape-time 0
 
-setw -g mode-keys vi
+## setw -g mode-keys vi
 
 # Enable mouse mode (tmux 2.1 and above)
-set -g mouse on
+## set -g mouse on
 # always pass right click through for pasting
 # oh noes! doesn't work for terminal
 # bind-key -T root MouseDown3Pane select-pane -t= ; send-keys -M
 # this hopefully works better
 # oh noes, only works in tmux 3.3 and above
-#bind-key -T root MouseDown3Pane if-shell -F -t = "#{||:#{mouse_any_flag},#{pane_in_mode}}" "select-pane -t=; send-keys -M" "refresh-client -l; paste-buffer"
+# bind-key -T root MouseDown3Pane if-shell -F -t = "#{||:#{mouse_any_flag},#{pane_in_mode}}" "select-pane -t=; send-keys -M" "refresh-client -l; paste-buffer"
 # bind-key -T root MouseDown3Pane if-shell -F -t = "#{||:#{mouse_any_flag},#{pane_in_mode}}" "select-pane -t=; send-keys -M" "refresh-client -l; paste-buffer"
 # bind -T root MouseDown3Pane run -b "xclip -o | tmux load-buffer - && tmux paste-buffer -s ' '"
 
@@ -76,7 +78,7 @@ set -g renumber-windows on
 # }
 
 # set -g pane-border-format "format"
-set -g pane-border-status "top"
+# set -g pane-border-status "top"
 # set -g pane-border-status "bottom"
 
 # Panes
@@ -98,47 +100,49 @@ set -g pane-border-status "top"
 
 #### COLOUR (Solarized dark)
 
-#default status-right
 # status-right "#{?window_bigger,[#{window_offset_x}#,#{window_offset_y}] ,}\"#{=21:pane_title}\" %H:%M %d-%b-%y"
+#default status-right
 # current status-right
 #
+# set -g status-right "%H:%M %d-%b-%y "
+# set -g status-right "#[fg=#(pomodoro tmux-color)] #(pomodoro status -f '%%t %!r 🍅') #[fg=yellow]#{?window_bigger,[#{window_offset_x}#,#{window_offset_y}] ,}#{=21:pane_title} %H:%M %d-%b-%y "
+# set -g status-right "#[fg=red] #{21:pane_title} %H:%M %d-%b-%y "
+# this reproduces the issue
 set -g status-right-length 60
-# issue with alacritty and the exclamation point
-set -g status-right "#[fg=#(pomodoro tmux-color)] #(pomodoro status -f '%%t %!r 🍅') #[fg=yellow]#{?window_bigger,[#{window_offset_x}#,#{window_offset_y}] ,}#{=21:pane_title} %H:%M %d-%b-%y "
-#set -g status-right "#[fg=#(pomodoro tmux-color)] #(pomodoro status -f '%t %r 🍅') #[fg=yellow]#{?window_bigger,[#{window_offset_x}#,#{window_offset_y}] ,}#{=21:pane_title} %H:%M %d-%b-%y "
+set -g status-right "#[fg=red] ❗️  #{21:pane_title} %H:%M:%S %d-%b-%y "
 
 # set-option -g status-interval 15
 set-option -g status-interval 1
 
 # default statusbar colors
-set-option -g status-style fg=yellow,bg=black #yellow and base02
+# set-option -g status-style fg=yellow,bg=black #yellow and base02
 
 # default window title colors
-set-window-option -g window-status-style fg=brightblue,bg=default #base0 and default
+# set-window-option -g window-status-style fg=brightblue,bg=default #base0 and default
 #set-window-option -g window-status-style dim
 
 # active window title colors
-set-window-option -g window-status-current-style fg=brightred,bg=default #orange and default
+# set-window-option -g window-status-current-style fg=brightred,bg=default #orange and default
 #set-window-option -g window-status-current-style bright
 
 # pane border
-set-option -g pane-border-style fg=black #base02
-set-option -g pane-active-border-style fg=white #base01
+# set-option -g pane-border-style fg=black #base02
+# set-option -g pane-active-border-style fg=white #base01
 
 # message text
-set-option -g message-style fg=yellow,bg=default #orange and base01
+# set-option -g message-style fg=yellow,bg=default #orange and base01
 
 # pane number display
-set-option -g display-panes-active-colour brightred #orange
-set-option -g display-panes-colour blue #blue
+# set-option -g display-panes-active-colour brightred #orange
+# set-option -g display-panes-colour blue #blue
 
 # clock
-set-window-option -g clock-mode-colour green #green
+# set-window-option -g clock-mode-colour green #green
 
 # bell
-set-window-option -g window-status-bell-style fg=black,bg=red #base02, red
+# set-window-option -g window-status-bell-style fg=black,bg=red #base02, red
 
-set -g @sessionx-bind 'j'
+#set -g @sessionx-bind 'j'
 
 # %if "#{WSL_DISTRO_NAME}" 
 # set -g @override_copy_command 'win32yank.exe -i'
