@@ -1,8 +1,45 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
+  # imports = [
+
+		# inputs.nix-colors.homeManagerModules.default
+
+		# inputs.nixvim.homeManagerModules.nixvim
+
+		# inputs.nixvim_flake.programs.x86_64-linux.default
+
+		# ./tmux.nix
+
+		# ./alacritty.nix
+
+		# ./kitty.nix
+
+		# ./bat.nix
+
+		# ./git.nix
+
+		# ./programs.nix
+
+		# ./zsh.nix
+
+		# ./zellij.nix
+
+		# ./starship.nix
+
+		# ./lazygit.nix
+
+#		./nixvim.nix
+
+#		./window_manager/hyprlock.nix
+
+		#./qutebrowser/qutebrowser.nix
+
+	# ];
+
+ 
   home.username = "nonni";
   home.homeDirectory = "/home/nonni";
 
@@ -17,7 +54,7 @@
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
-  home.packages = [
+  # home.packages = [
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello
@@ -34,7 +71,18 @@
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
-  ];
+    
+  # ];
+home.packages = with pkgs; [ 
+		#vscode-langservers-extracted
+		typescript-language-server
+		csharp-ls
+		jq
+		ripgrep
+		fd
+	        dotnetCorePackages.sdk_8_0_4xx
+		csharpier
+	];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
@@ -70,14 +118,30 @@
   home.sessionVariables = {
     EDITOR = "nvim";
   };
+ # home.sessionPath = [
+ #   "$HOME/bin/zig-0.14"
+ # ];
+
+  # this is a bit not very nix
+  #xdg.configFile."nvim".source = ../nvimcurrlazy;
+ # xdg.configFile."tmux".source = ../tmux;
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
-  programs.fish.enable = true;
-  programs.neovim = {
-	  enable = true;
-	  viAlias = true;
-	  vimAlias = true;
-  };
-  programs.gitui.enable = true;
+ # programs.fish.enable = true;
+  # programs.fish.interactiveShellInit = "fish_add_path -p /home/nonni/bin/zig-0.14";
+  # programs.curl.enable = true;
+ # programs.tmux.enable = true;
+   programs.neovim = {
+    enable = true;
+    viAlias = true;
+    vimAlias = true;
+    plugins = with pkgs.vimPlugins; [
+      csharpls-extended-lsp-nvim 
+      nvim-lspconfig
+      gruvbox-material-nvim
+    ];
+   };
+ programs.gitui.enable = true;
+  # programs.neovim.extraLuaConfig = lib.fileContents ../nvimcurrlazy/init.lua ;
 }
