@@ -18,7 +18,7 @@ opt.softtabstop = 4
 opt.showmode = false
 
 opt.list = true
-opt.listchars = "tab:·┈,trail:~,multispace:|···,extends:▶,precedes:◀,nbsp:‿"
+-- opt.listchars = "tab:·┈,trail:~,multispace:|···,extends:▶,precedes:◀,nbsp:‿"
 
 opt.number = true
 opt.relativenumber = true
@@ -35,3 +35,16 @@ opt.clipboard = "unnamedplus"
 
 -- Don't have `o` add a comment
 opt.formatoptions:remove "o"
+
+vim.g.clipboard = {
+    name = "xsel",
+    copy = {
+        ["+"] = "xsel --nodetach -i -b",
+        ["*"] = "xsel --nodetach -i -p",
+    },
+    paste = {
+        ["+"] = "xsel -o -b",
+        ["*"] = "xsel -o -p",
+    },
+    cache_enabled = true,
+}
