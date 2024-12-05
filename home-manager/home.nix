@@ -1,6 +1,8 @@
 {
   config,
   pkgs,
+  tmux-custom,
+  bugwarrior,
   lib,
   inputs,
   ...
@@ -12,23 +14,41 @@ let
     fd # find
     just # command runner
     openpomodoro-cli
-    smug
-    autoconf-archive
-    starship
+    smug # tmux session things
+    autoconf-archive # do we need this?
+    starship # prompt
     azure-cli
+    devenv # nix dev envs
+    sqlcmd # needed for sql stuff, maybe move to vim extraPackages
+    urlencode
+    dig # network tool
+    tig # view branches
+    unzip
+    p7zip
+    blesh # bash line editor
+    imagemagick
+    erlang_27
+    rebar3 # erlang package thing, sometimes needed for gleam
+    gleam
+    nodejs # eugh
+    inotify-tools # watch files change
+    tree
+    elixir
+    bugwarrior
+    # dotnet-runtime
+    # inputs.nvim
   ];
-  languageServers = with pkgs; [
-    nil # nix
-    typescript-language-server
-    csharp-ls
-    lua-language-server
-  ];
-  formatters = with pkgs; [
-    csharpier
-    nixfmt-rfc-style
-  ];
-  sdks = with pkgs; [
-    dotnetCorePackages.sdk_8_0_4xx
+  dotnetSdk = pkgs.dotnetCorePackages.sdk_8_0_3xx;
+  # python = pkgs.python311.withPackages (
+  #   p: with p; [
+  #     pbr
+  #     bugwarrior
+  #   ]
+  # );
+  # sdks = with pkgs; [
+  sdks = [
+    dotnetSdk
+    # python
   ];
   sixelSource = pkgs.fetchFromGitHub {
     owner = "csdvrx";
@@ -36,9 +56,86 @@ let
     rev = "6f18f18";
     sha256 = "sha256-wRv+SkA7+y7/UiO4oaunuUkLmi1UTKgasfERguJdgx4=";
   };
-in
-{
+  # all grammars
+  # with 18 grammars, startup time is 6 ms for nvim-treesitter
+  # with all grammars,startup time is 8 ms for nvim-treesitter
+  # It is probably worth it just to have all grammars and pay those 2 ms
+  # Todo add fsharp
+  vimStartupPlugins = with pkgs.vimPlugins; [
+    # (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
+    nvim-treesitter.withAllGrammars
+  ];
+  # note, these plugins are optional so do not add to the startup time. Mostly.
+  vimOptionalPlugins =
+    with pkgs.vimPlugins;
+    map
+      (pl: {
+        plugin = pl;
+        optional = true;
+      })
+      [
+        #color
+        gruvbox-material-nvim
+        #completion
+        nvim-cmp
+        cmp-nvim-lsp
+        cmp-buffer
+        cmp-path
+        # own-care-nvim
+        #lsp and formatting
+        nvim-lspconfig
+        csharpls-extended-lsp-nvim
+        Ionide-vim
+        conform-nvim
+        #ui
+        neo-tree-nvim
+        which-key-nvim
+        indent-blankline-nvim
+        mini-indentscope
+        lualine-nvim
+        #dap
+        nvim-dap
+        nvim-dap-ui
+        nvim-nio # dependency for ui
+        nvim-dap-virtual-text
+        #sql
+        vim-dadbod-completion
+        vim-dadbod-ui
+        vim-dadbod
+        #dbee needed
+        nvim-dbee
+        vim-dispatch
 
+        #mini. All the mini.
+        mini-nvim
+      ];
+in
+# fromGitHub =
+#   ref: repo:
+#   pkgs.vimUtils.buildVimPlugin {
+#     pname = "${lib.strings.sanitizeDerivationName repo}";
+#     version = ref;
+#     src = builtins.fetchGit {
+#       url = "https://github.com/${repo}.git";
+#       ref = ref;
+#     };
+#   };
+{
+  # nixpkgs.overlays = [
+  #   nvim.overlays.default
+  # ];
+  # nixpkgs = {
+  #   overlays = [
+  #     (final: prev: {
+  #       vimPlugins = prev.vimPlugins // {
+  #         own-care-nvim = prev.vimUtils.buildVimPlugin {
+  #           name = "care";
+  #           src = inputs.care-nvim;
+  #         };
+  #       };
+  #     })
+  #   ];
+  # };
   home.username = "nonni";
   home.homeDirectory = "/home/nonni";
 
@@ -51,11 +148,14 @@ in
   # release notes.
   home.stateVersion = "24.05"; # Please read the comment before changing.
 
-  home.packages = programs ++ sdks ++ languageServers ++ formatters;
+  # home.packages = programs ++ dotnetP ++ nix ++ js ++ lua;
+  home.packages = programs ++ sdks;
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   # todo change to flake
+  # todo, fix 24 bit
+  # todo, fix hashbang
   home.file = {
     "sixel-testsuite".source =
       pkgs.runCommand "sixel-test-runnable"
@@ -71,21 +171,77 @@ in
 
   home.sessionVariables = {
     EDITOR = "nvim";
+    NVIM_APPNAME = "nvimnonni";
+    XDG_CONFIG_HOME = "${config.home.homeDirectory}/.config";
+    XDG_CACHE_HOME = "${config.home.homeDirectory}/.cache";
+    XDG_DATA_HOME = "${config.home.homeDirectory}/.local/share";
+    XDG_STATE_HOME = "${config.home.homeDirectory}/.local/state";
+    XDG_BIN_HOME = "${config.home.homeDirectory}/.local/bin";
+    ZK_NOTEBOOK_DIR = "${config.home.homeDirectory}/vimwiki";
+    RIPGREP_CONFIG_PATH = "${config.home.homeDirectory}/.config/ripgreprc";
+    # DOTNET_ROOT = "${pkgs.dotnetCorePackages.sdk_8_0_3xx.runtime}";
   };
 
-  # home.sessionPath = [
-  #   "$HOME/bin/zig-0.14"
-  # ];
+  home.sessionPath = [
+    "${config.home.homeDirectory}/bin/zig-0.14"
+    "${config.home.homeDirectory}/.local/bin"
+  ];
 
   # this is a bit that's not very nix-like
   xdg.configFile."nvim".source = ../nvimnonni;
 
-  programs.home-manager.enable = true;
+  programs = {
+    home-manager.enable = true;
+    # bash.enable = true;
+  };
 
   # https://nixos.wiki/wiki/Fish
   # defaults fine for now
+  # see dotfiles/fish for things to improve
+  # todo, maybe add wt.exe to path for pane splitting etc
   programs.fish.enable = true;
+  programs.fish = {
+    #not sure this is ever run?
+    loginShellInit = ''
+      # echo "we are a login shell"
+      if string match -q -e microsoft (uname -r)
+        ulimit -Sn 65536 # increase sockets on WSL2
+      end
+      # stupid hack for stupid nix dotnet root
+      set -gx DOTNET_ROOT $(dotnet --info | awk -F': ' '/Base Path:/ {path=$2; gsub(/^[ \t]+/, "", path); sub(/\/[^/]+\/[^/]+\/?$/, "", path); print path}')
+    '';
 
+    shellInit = ''
+      set -gx PATH (string match -v '/mnt/c/*' $PATH)
+      # fish_add_path -aP /mnt/c/Windows/System32
+    '';
+    shellAbbrs = {
+      #better to define this in git?
+      gco = "git checkout";
+      gcp = "git push";
+      gpr = "git pull --rebase";
+      grs = "git remote -v show";
+      # gs  = "git stash";
+      gsu = "git stash --include-untracked --keep-index";
+      gsp = "git stash pop";
+      la = "ls -al";
+      hmu = "home-manager switch --flake ~/dotfiles/home-manager/";
+      # grep = "rg";
+    };
+  };
+
+  programs.taskwarrior = {
+    enable = true;
+    package = pkgs.taskwarrior3;
+  };
+
+  programs.zk = {
+    enable = true;
+  };
+
+  programs.pyenv = {
+    enable = true;
+  };
   # programs.tmux.package = pkgs.tmux.overrideAttrs (_: rec {
   #   # version = "2.9a";
   #   src = pkgs.fetchFromGitHub {
@@ -95,7 +251,10 @@ in
   #     sha256 = "sha256-yhBXZKhl+YsQSzt7NEBf/0gDT0cxbwSN5OoilxhVu2w=";
   #   };
   # });
+
+  # todo, how can we do this better?
   programs.tmux = {
+    package = tmux-custom;
     enable = true;
     baseIndex = 1; # also does panes
     terminal = "tmux-256color";
@@ -218,6 +377,20 @@ in
   };
 
   programs.gitui.enable = true;
+  # https://github.com/extrawurst/gitui/blob/master/KEY_CONFIG.md
+  programs.gitui.keyConfig = ''
+    (
+        move_left: Some(( code: Char('h'), modifiers: "")),
+        move_right: Some(( code: Char('l'), modifiers: "")),
+        move_up: Some(( code: Char('k'), modifiers: "")),
+        move_down: Some(( code: Char('j'), modifiers: "")),
+
+        stash_open: Some(( code: Char('l'), modifiers: "")),
+        open_help: Some(( code: F(1), modifiers: "")),
+
+        status_reset_item: Some(( code: Char('U'), modifiers: "SHIFT")),
+    )
+  '';
 
   programs.fzf.enable = true;
   # todo make flake, see what solvi is doing github.com/solvimarm
@@ -226,39 +399,21 @@ in
     # extraLuaConfig =  lib.fileContents ../nvimcurrlazy/init.lua ;
     viAlias = true;
     vimAlias = true;
-    plugins = with pkgs.vimPlugins; [
-      csharpls-extended-lsp-nvim
-      nvim-lspconfig
-      vim-dispatch
-      gruvbox-material-nvim
-      neo-tree-nvim
-      which-key-nvim
-      indent-blankline-nvim
-      mini-indentscope
-      conform-nvim
-      lualine-nvim
-      (nvim-treesitter.withPlugins (
-        plugins: with plugins; [
-          nix
-          python
-          c-sharp
-          javascript
-          java
-          ocaml
-          html
-          regex
-          css
-          toml
-          lua
-          sql
-          yaml
-          fish
-          dot
-          dockerfile
-          http
-          gleam
-        ]
-      ))
+    # package = pkgs.nvim-pkg;
+    extraPackages = with pkgs; [
+      csharp-ls
+      csharpier # formatter
+      fsautocomplete
+      netcoredbg
+
+      lua-language-server
+      stylua
+
+      nil # nix lsp
+      nixfmt-rfc-style
+
+      typescript-language-server
     ];
+    plugins = vimStartupPlugins ++ vimOptionalPlugins;
   };
 }
