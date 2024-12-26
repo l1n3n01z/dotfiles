@@ -3,12 +3,13 @@
   pkgs,
   tmux-custom,
   bugwarrior,
-  lib,
+  # lib,
   inputs,
   ...
 }:
 let
   programs = with pkgs; [
+    page
     jq
     ripgrep
     fd # find
@@ -242,15 +243,6 @@ in
   programs.pyenv = {
     enable = true;
   };
-  # programs.tmux.package = pkgs.tmux.overrideAttrs (_: rec {
-  #   # version = "2.9a";
-  #   src = pkgs.fetchFromGitHub {
-  #     owner = "tmux";
-  #     repo = "tmux";
-  #     rev = "89adec0ca5f3cf7510b3854967b33b399871da7e";
-  #     sha256 = "sha256-yhBXZKhl+YsQSzt7NEBf/0gDT0cxbwSN5OoilxhVu2w=";
-  #   };
-  # });
 
   # todo, how can we do this better?
   programs.tmux = {
