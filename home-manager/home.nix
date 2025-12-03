@@ -9,6 +9,20 @@
 }:
 let
   programs = with pkgs; [
+    process-compose
+    zig_0_15
+    postgresql
+    firefox
+    pandoc
+    opencode
+    # gh
+    # gh-dash
+    lsd
+    kubectl
+    cook-cli
+    hyperfine
+    tree-sitter
+    powershell
     page
     jq
     ripgrep
@@ -36,20 +50,34 @@ let
     tree
     elixir
     bugwarrior
+    omnisharp-roslyn
+    # dotnetCorePackages.aspnetcore_8_0-bin
     # dotnet-runtime
     # inputs.nvim
   ];
-  dotnetSdk = pkgs.dotnetCorePackages.sdk_8_0_3xx;
-  # python = pkgs.python311.withPackages (
-  #   p: with p; [
-  #     pbr
-  #     bugwarrior
+  #it's probably best to leave this gimmick to flakes, and just keep dotnet 8 as my main
+  # dotnetSdk = (
+  #   pkgs.dotnetCorePackages.combinePackages [
+  #     pkgs.dotnetCorePackages.dotnet_9.sdk
+  #     pkgs.dotnetCorePackages.sdk_8_0_3xx
   #   ]
   # );
+  # pkgs.dotnetCorePackages.dotnet_9.sdk;
+  # dotnetSdk = pkgs.dotnetCorePackages.sdk_8_0_3xx;
+  dotnetSdk = pkgs.dotnetCorePackages.sdk_8_0-bin;
+  python = pkgs.python312.withPackages (
+    p: with p; [
+      recipe-scrapers
+      numpy
+      scipy
+      librosa
+      scikit-learn
+    ]
+  );
   # sdks = with pkgs; [
   sdks = [
     dotnetSdk
-    # python
+    python
   ];
   sixelSource = pkgs.fetchFromGitHub {
     owner = "csdvrx";
@@ -75,39 +103,41 @@ let
         optional = true;
       })
       [
-        #color
+        ##color
         gruvbox-material-nvim
-        #completion
-        nvim-cmp
-        cmp-nvim-lsp
-        cmp-buffer
-        cmp-path
+        ##completion
+        blink-cmp
+        vim-fugitive
+        # nvim-cmp
+        # cmp-nvim-lsp
+        # cmp-buffer
+        # cmp-path
         # own-care-nvim
-        #lsp and formatting
+        ##lsp and formatting
         nvim-lspconfig
         csharpls-extended-lsp-nvim
         Ionide-vim
         conform-nvim
-        #ui
+        ##ui
         neo-tree-nvim
         which-key-nvim
         indent-blankline-nvim
         mini-indentscope
         lualine-nvim
-        #dap
+        ##dap
         nvim-dap
         nvim-dap-ui
         nvim-nio # dependency for ui
         nvim-dap-virtual-text
-        #sql
+        ##sql
         vim-dadbod-completion
         vim-dadbod-ui
         vim-dadbod
-        #dbee needed
+        ##dbee needed
         nvim-dbee
         vim-dispatch
 
-        #mini. All the mini.
+        ##mini. All the mini.
         mini-nvim
       ];
 in
@@ -168,33 +198,85 @@ in
           cp -a $src/* $out
           chmod u+x $out/*.sh
         '';
+    # silly hack
+    ".local/bin/omnisharp".source = "${pkgs.omnisharp-roslyn}/bin/OmniSharp";
   };
 
   home.sessionVariables = {
     EDITOR = "nvim";
-    NVIM_APPNAME = "nvimnonni";
+    # NVIM_APPNAME = "nvimnonni";
     XDG_CONFIG_HOME = "${config.home.homeDirectory}/.config";
     XDG_CACHE_HOME = "${config.home.homeDirectory}/.cache";
     XDG_DATA_HOME = "${config.home.homeDirectory}/.local/share";
     XDG_STATE_HOME = "${config.home.homeDirectory}/.local/state";
     XDG_BIN_HOME = "${config.home.homeDirectory}/.local/bin";
-    ZK_NOTEBOOK_DIR = "${config.home.homeDirectory}/vimwiki";
     RIPGREP_CONFIG_PATH = "${config.home.homeDirectory}/.config/ripgreprc";
-    # DOTNET_ROOT = "${pkgs.dotnetCorePackages.sdk_8_0_3xx.runtime}";
+    DOTNET_ROOT = "${pkgs.dotnetCorePackages.sdk_8_0-bin}/share/dotnet";
   };
 
   home.sessionPath = [
-    "${config.home.homeDirectory}/bin/zig-0.14"
+    # "${config.home.homeDirectory}/bin/zig-0.14"
     "${config.home.homeDirectory}/.local/bin"
   ];
 
   # this is a bit that's not very nix-like
-  xdg.configFile."nvim".source = ../nvimnonni;
+  # xdg.configFile."nvim".source = ../nvimnonni;
 
   programs = {
     home-manager.enable = true;
     # bash.enable = true;
   };
+
+  # TODO, make it easy to use multiple identities
+  # https://seansantry.com/development/2022/12/14/split-git-nix/
+  # https://pickard.cc/posts/git-identity-home-manager/
+  programs.git.enable = true;
+  programs.git = {
+    userName = "Nonni";
+    userEmail = "Jon.Thoroddsen@origo.is";
+    # signing = {
+    #   key = "<key>";
+    #   signByDefault = true;
+    # };
+    extraConfig = {
+      init.defaultbranch = "main";
+      url = {
+        "ssh://git@github.com" = {
+          insteadOf = "https://github.com";
+        };
+      };
+    };
+  };
+
+  programs.gh.enable = true;
+  programs.gh = {
+    # https://discourse.nixos.org/t/logging-in-with-gh-auth-and-home-manager/61590
+    # gitCredentialHelper = {
+    #   enable = true;
+    #   hosts = [
+    #     "https://github.com"
+    #     "https://api.github.com"
+    #   ];
+    # };
+    settings = {
+      git_protocol = "ssh";
+      prompt = "enabled";
+    };
+    # hosts = {
+    #   "github.com" = {
+    #     user = "ori-nonni";
+    #   };
+    # };
+  };
+
+  # gh-dash extension has it's own config
+  programs.gh-dash.enable = true;
+  # programs.gh-dash.settings = {
+  #   prSections = [{
+  #     title = "My Pull Requests";
+  #     filters = "is:open author:@me";
+  #   }];
+  # };
 
   # https://nixos.wiki/wiki/Fish
   # defaults fine for now
@@ -209,7 +291,8 @@ in
         ulimit -Sn 65536 # increase sockets on WSL2
       end
       # stupid hack for stupid nix dotnet root
-      set -gx DOTNET_ROOT $(dotnet --info | awk -F': ' '/Base Path:/ {path=$2; gsub(/^[ \t]+/, "", path); sub(/\/[^/]+\/[^/]+\/?$/, "", path); print path}')
+      # set -gx DOTNET_ROOT (dirname (readlink -f (which dotnet)))
+      # set -gx DOTNET_ROOT $(dotnet --info | awk -F': ' '/Base Path:/ {path=$2; gsub(/^[ \t]+/, "", path); sub(/\/[^/]+\/[^/]+\/?$/, "", path); print path}')
     '';
 
     shellInit = ''
@@ -227,6 +310,7 @@ in
       gsp = "git stash pop";
       la = "ls -al";
       hmu = "home-manager switch --flake ~/dotfiles/home-manager/";
+      # omnisharp = "OmniSharp";
       # grep = "rg";
     };
   };
@@ -238,11 +322,76 @@ in
 
   programs.zk = {
     enable = true;
+# https://github.com/zk-org/zk/blob/main/docs/config/config.md
+    settings = {
+      notebook = {
+        dir = "~/vimwiki";
+      };
+
+      note = {
+        language = "en";
+        default-title = "Untitled";
+        filename = "{{slug title}}-{{id}}";
+        extension = "md";
+        template = "/home/nonni/vimwiki/templates/default.md";
+        id-charset = "alphanum";
+        id-length = 4;
+        id-case = "lower";
+      };
+
+      group.journal = {
+        paths = [ "journal" ];
+        note = {
+          template = "/home/nonni/vimwiki/templates/journal.md";
+          filename = "{{format-date now}}";
+          # note, this is not a template
+          # default-title = "{{format-date now}}";
+        };
+      };
+      alias.journal = ''zk new --no-input "$ZK_NOTEBOOK_DIR/journal"'';
+    };
   };
+
+
+  # Templates managed by Home Manager too. 
+  # Which I don't really think is a good idea
+  home.file."vimwiki/templates/default.md".text = ''
+    ---
+    title: "{{title}}"
+    date: "{{format-date now}}"
+    tags: [journal]
+    ---
+
+    # {{title}}
+    
+  '';
+
+  #include links?
+  # prev: "[[{{yesterday}}]]"
+  # next: "[[{{tomorrow}}]]"
+  home.file."vimwiki/templates/journal.md".text = ''
+    ---
+    title: "{{format-date now}}"
+    date: "{{format-date now}}"
+    tags: [journal]
+    ---
+
+    # {{format-date now "long"}}
+    
+  '';
+
+  # Some convenience aliases
+  # home.shellAliases = {
+  #   zn = "zk new --edit";
+  #   zd = "zk new --group diary --title $(date +%F) --edit";
+  #   zf = "zk list | fzf | xargs nvim";
+  # };
 
   programs.pyenv = {
     enable = true;
   };
+
+  programs.go.enable = true;
 
   # todo, how can we do this better?
   programs.tmux = {
@@ -270,6 +419,7 @@ in
 
       # Use y to yank current selection
       bind -T copy-mode-vi y send-keys -X copy-selection
+      set-option -g focus-events on
 
       unbind '"'
       unbind %
@@ -387,7 +537,7 @@ in
   programs.fzf.enable = true;
   # todo make flake, see what solvi is doing github.com/solvimarm
   programs.neovim = {
-    enable = true;
+    enable = false;
     # extraLuaConfig =  lib.fileContents ../nvimcurrlazy/init.lua ;
     viAlias = true;
     vimAlias = true;
@@ -405,6 +555,8 @@ in
       nixfmt-rfc-style
 
       typescript-language-server
+
+      zls_0_15 # zig language server
     ];
     plugins = vimStartupPlugins ++ vimOptionalPlugins;
   };

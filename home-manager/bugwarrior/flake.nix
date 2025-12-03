@@ -14,12 +14,19 @@
       bugwarrior = pkgs.python3Packages.buildPythonPackage rec {
         pname = "bugwarrior";
         version = "1.8-develop"; # Optionally, you can specify a custom version here
+        # version = "1.8-develop"; # Optionally, you can specify a custom version here
+
+        # get rid of this if we update, toml was added in aug 2025
+        # format = "pyproject";
+        format = "setuptools";
 
         src = pkgs.fetchFromGitHub {
           owner = "GothenburgBitFactory";
           repo = "bugwarrior";
-          rev = "develop"; # Or specify a specific commit hash or tag
-          sha256 = "sha256-kMNxA3Datbj5D4PHE1qdMXvBX5+HPtHEIc+P0r6f+Pg="; # Replace with the correct sha256 hash
+          rev = "90c001f"; # Or specify a specific commit hash or tag
+          # rev = "develop"; # Or specify a specific commit hash or tag
+          sha256 = "sha256-eQFzVPZWqyYuZy135yztVcOSePS8SEZLuz5c9cIX+HM="; #Replace with the correct sha256 hash
+          # sha256 = ""; # Replace with the correct sha256 hash
         };
 
         # can we reduce the dependencies?
@@ -40,7 +47,8 @@
           lockfile
           click
           pyxdg
-          future
+          #probably no longer needed
+          # future
           jira
           pydantic
         ];
@@ -54,10 +62,7 @@
       };
     in
     {
-      # packages = {
-      #   tmux = tmux; # Expose tmux package here
-      # };
-      packages.${system}.bugwarrior = bugwarrior; # Expose tmux package
+      packages.${system}.bugwarrior = bugwarrior;
       # defaultPackage.x86_64-linux = tmux;
       defaultPackage.${system} = bugwarrior;
     };
