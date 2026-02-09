@@ -8,13 +8,15 @@
   ...
 }:
 let
+  pinnedOpencode = inputs.opencode-src.packages.${pkgs.stdenv.hostPlatform.system}.default;
   programs = with pkgs; [
     process-compose
     zig_0_15
     postgresql
     firefox
     pandoc
-    opencode
+    slides
+    pinnedOpencode
     # gh
     # gh-dash
     lsd
@@ -51,20 +53,25 @@ let
     elixir
     bugwarrior
     omnisharp-roslyn
+#needed for opencode
+    csharp-ls
+    csharpier
+    typescript-language-server
     # dotnetCorePackages.aspnetcore_8_0-bin
     # dotnet-runtime
     # inputs.nvim
   ];
   #it's probably best to leave this gimmick to flakes, and just keep dotnet 8 as my main
-  # dotnetSdk = (
-  #   pkgs.dotnetCorePackages.combinePackages [
-  #     pkgs.dotnetCorePackages.dotnet_9.sdk
-  #     pkgs.dotnetCorePackages.sdk_8_0_3xx
-  #   ]
-  # );
+  dotnetSdk = (
+    pkgs.dotnetCorePackages.combinePackages [
+      # pkgs.dotnetCorePackages.dotnet_9.sdk
+      pkgs.dotnetCorePackages.sdk_8_0-bin
+      pkgs.dotnetCorePackages.sdk_9_0-bin
+    ]
+  );
   # pkgs.dotnetCorePackages.dotnet_9.sdk;
   # dotnetSdk = pkgs.dotnetCorePackages.sdk_8_0_3xx;
-  dotnetSdk = pkgs.dotnetCorePackages.sdk_8_0-bin;
+  # dotnetSdk = pkgs.dotnetCorePackages.sdk_8_0-bin;
   python = pkgs.python312.withPackages (
     p: with p; [
       recipe-scrapers
@@ -204,7 +211,7 @@ in
 
   home.sessionVariables = {
     EDITOR = "nvim";
-    # NVIM_APPNAME = "nvimnonni";
+    NVIM_APPNAME = "nvimtight";
     XDG_CONFIG_HOME = "${config.home.homeDirectory}/.config";
     XDG_CACHE_HOME = "${config.home.homeDirectory}/.cache";
     XDG_DATA_HOME = "${config.home.homeDirectory}/.local/share";
@@ -421,11 +428,15 @@ in
       bind -T copy-mode-vi y send-keys -X copy-selection
       set-option -g focus-events on
 
+
       unbind '"'
       unbind %
       bind | split-window -h
       bind / split-window -h
       bind - split-window -v
+
+      bind j display-popup -d "#{pane_current_path}" -E -w 80% -h 80% -E gitui
+      bind h display-popup -d "#{pane_current_path}" -w 80% -h 80%
 
       set -g renumber-windows on 
 

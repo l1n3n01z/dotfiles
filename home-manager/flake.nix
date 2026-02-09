@@ -5,11 +5,13 @@
   # pretty simple actually
 
   inputs = {
+    nixpkgs-opencode.url = "github:nixos/nixpkgs/nixos-unstable";
     # Specify the source of Home Manager and Nixpkgs.
     # Nonni: can we be more specific?
     # nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable/811c0af5f59b2d78e9344ef6a64c7a357214c417";
     # nixpkgs.url = "github:nixos/nixpkgs";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    opencode-src.url = "github:sst/opencode";
     # care-nvim.url = "github:max397574/care.nvim/800741c255939c0f345239662ec268557ac3eefa";
     # nvim.url = "github:nix-community/kickstart-nix.nvim";
     # nvim.url = "github:mrcjkb/nvim";
@@ -41,8 +43,8 @@
       # nvim,
       ...
     }:
-    let
-      system = "x86_64-linux";
+     let
+       system = "x86_64-linux";
       # pkgs = nixpkgs.legacyPackages.${system};
       pkgs = (
         import nixpkgs {
@@ -55,7 +57,15 @@
               "dotnet-sdk-wrapped-6.0.428"
               "dotnet-sdk-wrapped-7.0.410"
             ];
+            # allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
+            #  "1password-cli"
+            # ];
           };
+           overlays = [
+             (final: prev: {
+               opencode = inputs.opencode-src.packages.${system}.default;
+             })
+           ];
         }
       );
       # tmux = tmux.defaultPackage.${system};
