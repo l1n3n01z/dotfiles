@@ -5,13 +5,19 @@
   # pretty simple actually
 
   inputs = {
-    nixpkgs-opencode.url = "github:nixos/nixpkgs/nixos-unstable";
+    # Unused: was for pinning opencode to a specific nixpkgs version
+    # nixpkgs-opencode.url = "github:nixos/nixpkgs/nixos-unstable";
     # Specify the source of Home Manager and Nixpkgs.
     # Nonni: can we be more specific?
     # nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable/811c0af5f59b2d78e9344ef6a64c7a357214c417";
     # nixpkgs.url = "github:nixos/nixpkgs";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    opencode-src.url = "github:sst/opencode";
+
+    # Pinned nixpkgs for zls (current unstable has build failure: https://github.com/NixOS/nixpkgs/issues/488701)
+    nixpkgs-zls.url = "github:nixos/nixpkgs/4dadbbb";
+
+    # Unused: opencode is now available in nixpkgs unstable
+    # opencode-src.url = "github:sst/opencode";
     # care-nvim.url = "github:max397574/care.nvim/800741c255939c0f345239662ec268557ac3eefa";
     # nvim.url = "github:nix-community/kickstart-nix.nvim";
     # nvim.url = "github:mrcjkb/nvim";
@@ -21,6 +27,10 @@
     };
     bugwarrior = {
       url = "path:./bugwarrior"; # Use `url` with `path` for a local flake
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    copilot-stats = {
+      url = "path:./copilot-stats";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
@@ -36,10 +46,12 @@
     inputs@{
       self,
       nixpkgs,
+      nixpkgs-zls,
       home-manager,
       # care-nvim,
       tmux,
       bugwarrior,
+      copilot-stats,
       # nvim,
       ...
     }:
@@ -57,17 +69,24 @@
               "dotnet-sdk-wrapped-6.0.428"
               "dotnet-sdk-wrapped-7.0.410"
             ];
+            allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
+             "github-copilot-cli"
+           ];
             # allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
+            #
             #  "1password-cli"
             # ];
           };
            overlays = [
-             (final: prev: {
-               opencode = inputs.opencode-src.packages.${system}.default;
-             })
+             # Unused: opencode overlay, now using pkgs.opencode from nixpkgs
+             # (final: prev: {
+             #   opencode = inputs.opencode-src.packages.${system}.default;
+             # })
            ];
         }
       );
+      # Pinned pkgs for zls due to build failure in current unstable
+      pkgs-zls = import nixpkgs-zls { inherit system; };
       # tmux = tmux.defaultPackage.${system};
       # bugwarrior = bugwarrior.defaultPackage.${system};
 
@@ -130,9 +149,10 @@
         # Optionally use extraSpecialArgs
         # to pass through arguments to home.nix
         extraSpecialArgs = {
-          inherit inputs;
+          inherit inputs pkgs-zls;
           tmux-custom = tmux.defaultPackage.${system};
           bugwarrior = bugwarrior.defaultPackage.${system};
+          copilot-stats = copilot-stats.defaultPackage.${system};
           # tmux-custom = tmux;
           # bugwarrior = bugwarrior;
         };

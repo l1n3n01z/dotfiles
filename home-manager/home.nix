@@ -1,22 +1,26 @@
 {
   config,
   pkgs,
+  pkgs-zls,
   tmux-custom,
   bugwarrior,
+  copilot-stats,
   # lib,
   inputs,
   ...
 }:
 let
-  pinnedOpencode = inputs.opencode-src.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  # Unused: was for pinning opencode from a separate flake input
+  # pinnedOpencode = inputs.opencode-src.packages.${pkgs.stdenv.hostPlatform.system}.default;
   programs = with pkgs; [
     process-compose
-    zig_0_15
+    github-copilot-cli
+    zig
     postgresql
     firefox
     pandoc
     slides
-    pinnedOpencode
+    opencode
     # gh
     # gh-dash
     lsd
@@ -112,37 +116,71 @@ let
       [
         ##color
         gruvbox-material-nvim
+        tokyonight-nvim
+        catppuccin-nvim
+
         ##completion
         blink-cmp
-        vim-fugitive
+        friendly-snippets
         # nvim-cmp
         # cmp-nvim-lsp
         # cmp-buffer
         # cmp-path
-        # own-care-nvim
+
         ##lsp and formatting
         nvim-lspconfig
+        lazydev-nvim # lua dev helper
+        conform-nvim
+        nvim-lint
         csharpls-extended-lsp-nvim
         Ionide-vim
-        conform-nvim
-        ##ui
-        neo-tree-nvim
+
+        ##treesitter extras
+        nvim-treesitter-textobjects
+        nvim-ts-autotag
+
+        ##editor
+        flash-nvim
+        grug-far-nvim # search and replace
         which-key-nvim
-        indent-blankline-nvim
-        mini-indentscope
+        gitsigns-nvim
+        trouble-nvim
+        todo-comments-nvim
+        persistence-nvim # session management
+        ts-comments-nvim
+
+        ##ui
+        snacks-nvim # dashboard, notifications, terminal, etc
+        bufferline-nvim
         lualine-nvim
+        noice-nvim
+        nui-nvim # ui component library (noice dep)
+        nvim-web-devicons
+        indent-blankline-nvim
+
+        ##file explorer
+        neo-tree-nvim
+        plenary-nvim # utility library
+
+        ##picker
+        telescope-nvim
+        telescope-fzf-native-nvim
+
         ##dap
         nvim-dap
         nvim-dap-ui
-        nvim-nio # dependency for ui
+        nvim-nio # dependency for dap-ui
         nvim-dap-virtual-text
+
+        ##git
+        vim-fugitive
+        vim-dispatch
+
         ##sql
         vim-dadbod-completion
         vim-dadbod-ui
         vim-dadbod
-        ##dbee needed
         nvim-dbee
-        vim-dispatch
 
         ##mini. All the mini.
         mini-nvim
@@ -209,6 +247,11 @@ in
     ".local/bin/omnisharp".source = "${pkgs.omnisharp-roslyn}/bin/OmniSharp";
   };
 
+  xdg.configFile = {
+    "opencode/plugins/copilot-stats.ts".source = "${copilot-stats}/plugins/copilot-stats.ts";
+    "opencode/commands/copilot-stats.md".source = "${copilot-stats}/commands/copilot-stats.md";
+  };
+
   home.sessionVariables = {
     EDITOR = "nvim";
     NVIM_APPNAME = "nvimtight";
@@ -239,13 +282,15 @@ in
   # https://pickard.cc/posts/git-identity-home-manager/
   programs.git.enable = true;
   programs.git = {
-    userName = "Nonni";
-    userEmail = "Jon.Thoroddsen@origo.is";
     # signing = {
     #   key = "<key>";
     #   signByDefault = true;
     # };
-    extraConfig = {
+    settings = {
+      user = {
+        name = "Nonni";
+        email = "Jon.Thoroddsen@origo.is";
+      };
       init.defaultbranch = "main";
       url = {
         "ssh://git@github.com" = {
@@ -548,26 +593,41 @@ in
   programs.fzf.enable = true;
   # todo make flake, see what solvi is doing github.com/solvimarm
   programs.neovim = {
-    enable = false;
+    enable = true;
     # extraLuaConfig =  lib.fileContents ../nvimcurrlazy/init.lua ;
     viAlias = true;
     vimAlias = true;
     # package = pkgs.nvim-pkg;
     extraPackages = with pkgs; [
+      # C#/F#
       csharp-ls
       csharpier # formatter
       fsautocomplete
       netcoredbg
 
+      # Lua
       lua-language-server
       stylua
 
+      # Nix
       nil # nix lsp
-      nixfmt-rfc-style
+      nixfmt
 
+      # TypeScript/JavaScript
       typescript-language-server
+      nodePackages.prettier
 
-      zls_0_15 # zig language server
+      # Zig (pinned due to build failure in current unstable)
+      pkgs-zls.zls
+
+      # Shell
+      shfmt
+      shellcheck
+
+      # General tools
+      ripgrep
+      fd
+      lazygit
     ];
     plugins = vimStartupPlugins ++ vimOptionalPlugins;
   };
