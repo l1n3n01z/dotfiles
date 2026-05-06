@@ -1,0 +1,6 @@
+auth.json
+sessions/
+git/
+npm/
+node_modules/
+*.log

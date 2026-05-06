@@ -2,16 +2,13 @@
   config,
   pkgs,
   pkgs-zls,
-  tmux-custom,
   bugwarrior,
   copilot-stats,
-  # lib,
+  lib,
   inputs,
   ...
 }:
 let
-  # Unused: was for pinning opencode from a separate flake input
-  # pinnedOpencode = inputs.opencode-src.packages.${pkgs.stdenv.hostPlatform.system}.default;
   programs = with pkgs; [
     process-compose
     github-copilot-cli
@@ -20,9 +17,7 @@ let
     firefox
     pandoc
     slides
-    opencode
-    # gh
-    # gh-dash
+    pi-coding-agent
     lsd
     kubectl
     cook-cli
@@ -57,20 +52,13 @@ let
     elixir
     bugwarrior
     omnisharp-roslyn
-#needed for opencode
-    csharp-ls
-    csharpier
-    typescript-language-server
-    # dotnetCorePackages.aspnetcore_8_0-bin
-    # dotnet-runtime
-    # inputs.nvim
   ];
   #it's probably best to leave this gimmick to flakes, and just keep dotnet 8 as my main
   dotnetSdk = (
     pkgs.dotnetCorePackages.combinePackages [
       # pkgs.dotnetCorePackages.dotnet_9.sdk
       pkgs.dotnetCorePackages.sdk_8_0-bin
-      pkgs.dotnetCorePackages.sdk_9_0-bin
+      pkgs.dotnetCorePackages.sdk_10_0-bin
     ]
   );
   # pkgs.dotnetCorePackages.dotnet_9.sdk;
@@ -81,7 +69,7 @@ let
       recipe-scrapers
       numpy
       scipy
-      librosa
+      (librosa.overridePythonAttrs (old: { doCheck = false; }))
       scikit-learn
     ]
   );
@@ -90,6 +78,7 @@ let
     dotnetSdk
     python
   ];
+  piAgentDir = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/home-manager/pi-agent";
   sixelSource = pkgs.fetchFromGitHub {
     owner = "csdvrx";
     repo = "sixel-testsuite";
@@ -245,11 +234,7 @@ in
         '';
     # silly hack
     ".local/bin/omnisharp".source = "${pkgs.omnisharp-roslyn}/bin/OmniSharp";
-  };
-
-  xdg.configFile = {
-    "opencode/plugins/copilot-stats.ts".source = "${copilot-stats}/plugins/copilot-stats.ts";
-    "opencode/commands/copilot-stats.md".source = "${copilot-stats}/commands/copilot-stats.md";
+    ".pi/agent".source = piAgentDir;
   };
 
   home.sessionVariables = {
@@ -261,7 +246,8 @@ in
     XDG_STATE_HOME = "${config.home.homeDirectory}/.local/state";
     XDG_BIN_HOME = "${config.home.homeDirectory}/.local/bin";
     RIPGREP_CONFIG_PATH = "${config.home.homeDirectory}/.config/ripgreprc";
-    DOTNET_ROOT = "${pkgs.dotnetCorePackages.sdk_8_0-bin}/share/dotnet";
+    # DOTNET_ROOT = "${pkgs.dotnetCorePackages.sdk_8_0-bin}/share/dotnet";
+    DOTNET_ROOT = "${dotnetSdk}/share/dotnet";
   };
 
   home.sessionPath = [
@@ -350,6 +336,9 @@ in
     shellInit = ''
       set -gx PATH (string match -v '/mnt/c/*' $PATH)
       # fish_add_path -aP /mnt/c/Windows/System32
+      # fish 4.3 moved fish_key_bindings from universal to global scope;
+      # set it explicitly so shells don't warn about an empty function name
+      set --global fish_key_bindings fish_default_key_bindings
     '';
     shellAbbrs = {
       #better to define this in git?
@@ -440,14 +429,14 @@ in
   # };
 
   programs.pyenv = {
-    enable = true;
+    enable = false;
   };
 
   programs.go.enable = true;
 
   # todo, how can we do this better?
   programs.tmux = {
-    package = tmux-custom;
+    package = pkgs.tmux;
     enable = true;
     baseIndex = 1; # also does panes
     terminal = "tmux-256color";
@@ -473,6 +462,9 @@ in
       bind -T copy-mode-vi y send-keys -X copy-selection
       set-option -g focus-events on
 
+      # allow shift enter etc
+      set -g extended-keys on
+      set -g extended-keys-format csi-u
 
       unbind '"'
       unbind %
@@ -535,7 +527,7 @@ in
       set-window-option -g window-status-separator ""
 
       set-option -g status-left "#[bg=colour241,fg=colour248] #S #[bg=colour237,fg=colour241,nobold,noitalics,nounderscore]"
-      set-option -g status-right "#[bg=colour237,fg=colour239 nobold, nounderscore, noitalics]#[bg=colour239,fg=colour246] %Y-%m-%d  %H:%M #[bg=colour239,fg=colour248,nobold,noitalics,nounderscore]#[bg=colour248,fg=colour237] #h "
+      set-option -g status-right "#[bg=colour237,fg=colour239 nobold, nounderscore, noitalics]#[bg=colour239,fg=colour246] #(copilot-stats)  %a %Y-%m-%d  %H:%M #[bg=colour239,fg=colour248,nobold,noitalics,nounderscore]#[bg=colour248,fg=colour237] #h "
 
       # set-window-option -g window-status-current-format "#[bg=colour214,fg=colour237,nobold,noitalics,nounderscore]#[bg=colour214,fg=colour239] #I #[bg=colour214,fg=colour239,bold] #W#{?window_zoomed_flag,*Z,} #[bg=colour237,fg=colour214,nobold,noitalics,nounderscore]"
       set-window-option -g window-status-current-format "#[bg=colour237,fg=yellow,nobold,noitalics,nounderscore] #I#[bg=yellow,fg=colour237, bold] #W#{?window_zoomed_flag,*Z,} #[bg=colour237,fg=yellow,nobold,noitalics,nounderscore]"
@@ -594,6 +586,8 @@ in
   # todo make flake, see what solvi is doing github.com/solvimarm
   programs.neovim = {
     enable = true;
+    withRuby = false;
+    withPython3 = false;
     # extraLuaConfig =  lib.fileContents ../nvimcurrlazy/init.lua ;
     viAlias = true;
     vimAlias = true;
@@ -615,7 +609,7 @@ in
 
       # TypeScript/JavaScript
       typescript-language-server
-      nodePackages.prettier
+      prettier
 
       # Zig (pinned due to build failure in current unstable)
       pkgs-zls.zls

@@ -1,0 +1,19 @@
+{
+  "tui.editor.cursorUp": ["up", "ctrl+p", "alt+k"],
+  "tui.editor.cursorDown": ["down", "ctrl+n", "alt+j"],
+  "tui.editor.cursorLeft": ["left", "ctrl+b", "alt+h"],
+  "tui.editor.cursorRight": ["right", "ctrl+f", "alt+l"],
+  "tui.editor.deleteCharBackward": ["backspace", "ctrl+h"],
+  "tui.editor.pageUp": ["alt+p"],
+  "tui.editor.pageDown": ["alt+n"],
+  "tui.input.newLine": ["shift+enter", "ctrl+j"],
+  "tui.select.up": ["up", "ctrl+p", "alt+k"],
+  "tui.select.down": ["down", "ctrl+n", "alt+j"],
+  "tui.select.pageUp": ["alt+p"],
+  "tui.select.pageDown": ["alt+n"],
+  "app.model.cycleForward": [],
+  "app.model.cycleBackward": [],
+  "app.session.togglePath": ["alt+p"],
+  "app.session.toggleNamedFilter": ["alt+n"],
+  "app.models.toggleProvider": []
+}

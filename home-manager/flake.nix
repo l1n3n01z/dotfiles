@@ -5,8 +5,6 @@
   # pretty simple actually
 
   inputs = {
-    # Unused: was for pinning opencode to a specific nixpkgs version
-    # nixpkgs-opencode.url = "github:nixos/nixpkgs/nixos-unstable";
     # Specify the source of Home Manager and Nixpkgs.
     # Nonni: can we be more specific?
     # nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable/811c0af5f59b2d78e9344ef6a64c7a357214c417";
@@ -16,15 +14,12 @@
     # Pinned nixpkgs for zls (current unstable has build failure: https://github.com/NixOS/nixpkgs/issues/488701)
     nixpkgs-zls.url = "github:nixos/nixpkgs/4dadbbb";
 
-    # Unused: opencode is now available in nixpkgs unstable
-    # opencode-src.url = "github:sst/opencode";
+    # Pinned nixpkgs for azure-cli 2.77.0 (last known-good before nix upgrade broke post-deploy SslState)
+    nixpkgs-azure.url = "github:nixos/nixpkgs/b599843";
+
     # care-nvim.url = "github:max397574/care.nvim/800741c255939c0f345239662ec268557ac3eefa";
     # nvim.url = "github:nix-community/kickstart-nix.nvim";
     # nvim.url = "github:mrcjkb/nvim";
-    tmux = {
-      url = "path:./tmux-flake"; # Use `url` with `path` for a local flake
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     bugwarrior = {
       url = "path:./bugwarrior"; # Use `url` with `path` for a local flake
       inputs.nixpkgs.follows = "nixpkgs";
@@ -47,9 +42,9 @@
       self,
       nixpkgs,
       nixpkgs-zls,
+      nixpkgs-azure,
       home-manager,
       # care-nvim,
-      tmux,
       bugwarrior,
       copilot-stats,
       # nvim,
@@ -78,15 +73,34 @@
             # ];
           };
            overlays = [
-             # Unused: opencode overlay, now using pkgs.opencode from nixpkgs
-             # (final: prev: {
-             #   opencode = inputs.opencode-src.packages.${system}.default;
-             # })
+             # Pin azure-cli to 2.80.0 from a known-good nixpkgs commit to avoid
+             # the SslState NoneType bug introduced in 2.81.0 (azure-mgmt-web SDK issue)
+             (final: prev: {
+               azure-cli = pkgs-azure.azure-cli;
+             })
+
+             # Pin github-copilot-cli to a newer version than nixpkgs
+             # To update:
+             #   1. Check latest: gh release list --repo github/copilot-cli --limit 5
+             #   2. Update version below, set hash to "" (empty)
+             #   3. Run home-manager switch, nix will error with the correct hash
+             #   4. Copy the "got: sha256-..." hash into the hash field
+             (final: prev: {
+               github-copilot-cli = prev.github-copilot-cli.overrideAttrs (old: rec {
+                 version = "1.0.2";
+                 src = prev.fetchurl {
+                   url = "https://github.com/github/copilot-cli/releases/download/v${version}/copilot-linux-x64.tar.gz";
+                   hash = "sha256-Uh+H0E8HM1bGWtlz23Eksy/zoj/TJX8M0/z0xdRkkEc=";
+                 };
+               });
+             })
            ];
         }
       );
       # Pinned pkgs for zls due to build failure in current unstable
       pkgs-zls = import nixpkgs-zls { inherit system; };
+      # Pinned pkgs for azure-cli 2.80.0 due to SslState NoneType bug in 2.81.0
+      pkgs-azure = import nixpkgs-azure { inherit system; };
       # tmux = tmux.defaultPackage.${system};
       # bugwarrior = bugwarrior.defaultPackage.${system};
 
@@ -150,7 +164,6 @@
         # to pass through arguments to home.nix
         extraSpecialArgs = {
           inherit inputs pkgs-zls;
-          tmux-custom = tmux.defaultPackage.${system};
           bugwarrior = bugwarrior.defaultPackage.${system};
           copilot-stats = copilot-stats.defaultPackage.${system};
           # tmux-custom = tmux;
