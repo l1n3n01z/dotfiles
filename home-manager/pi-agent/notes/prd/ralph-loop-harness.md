@@ -76,7 +76,7 @@ Create a pi extension that monitors token usage during `/ralph-loop`, enforces a
 
 ## Further Notes
 
-- The existing PRD file lacked explicit degraded-zone behavior, extension/skill split, and token-availability guard; this PRD supersedes it.
+- This PRD defines the ralph-loop harness; it supersedes earlier draft PRDs.
 
 ## Linked Issues
 
