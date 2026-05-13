@@ -9,7 +9,7 @@ Create a pi extension that monitors token usage during `/ralph-loop` and tracks 
 
 ## Acceptance criteria
 
-- [ ] Uses `ctx.getContextUsage()` tokens only; refuses `/ralph-loop` if tokens unavailable and instructs to use `/ralph-issue`.
-- [ ] Stores PRD ref + issue/reset counters via `pi.appendEntry()` and carries them across auto-resets for the same PRD.
-- [ ] Injects an extension marker so `/ralph-loop` can detect extension presence.
-- [ ] Provides `/ralph-loop-status` command showing PRD ref, counts, token usage, zone.
+- [x] Uses `ctx.getContextUsage()` tokens only; refuses `/ralph-loop` if tokens unavailable and instructs to use `/ralph-issue`.
+- [x] Stores PRD ref + issue/reset counters via `pi.appendEntry()` and carries them across auto-resets for the same PRD.
+- [x] Injects an extension marker so `/ralph-loop` can detect extension presence.
+- [x] Provides `/ralph-loop-status` command showing PRD ref, counts, token usage, zone.
