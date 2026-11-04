@@ -23,7 +23,7 @@ cd ~/dotfiles
 ./bootstrap/wsl.sh
 ```
 
-On its first run in a fresh distribution, `wsl.sh` configures `/etc/wsl.conf` for systemd and stops. Run `wsl --shutdown` from PowerShell or Windows Terminal, reopen the distribution, then rerun `./bootstrap/wsl.sh`. The script runs the doctor after systemd is active.
+On its first run in a fresh distribution, `wsl.sh` configures `/etc/wsl.conf` for systemd and stops. Run `wsl --terminate <distro-name>` from PowerShell or Windows Terminal, reopen that distribution, then rerun `./bootstrap/wsl.sh`. The script runs the doctor after systemd is active.
 
 `wsl.sh` installs only bootstrap APT prerequisites, installs Nix in daemon mode if absent, enables flakes, activates Home Manager, creates a per-distro SSH key when GitHub CLI is authenticated, links managed agent configuration, and synchronizes Pi, Claude Code, and Copilot CLI.
 

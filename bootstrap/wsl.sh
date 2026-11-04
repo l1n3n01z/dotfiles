@@ -31,7 +31,7 @@ Review that file and enable:
   [boot]
   systemd=true
 
-Then run `wsl --shutdown` from Windows, reopen this distro, and rerun bootstrap/wsl.sh.
+Then run `wsl --terminate <this-distro>` from Windows, reopen this distro, and rerun bootstrap/wsl.sh.
 EOF
     return 75
   fi
@@ -45,8 +45,8 @@ EOF
   cat >&2 <<'EOF'
 Systemd has been configured, but WSL must restart before it takes effect.
 
-From PowerShell or Windows Terminal, run:
-  wsl --shutdown
+From PowerShell or Windows Terminal, terminate only this distribution:
+  wsl --terminate <distro-name>
 
 Reopen this Ubuntu distribution, then rerun:
   ~/dotfiles/bootstrap/wsl.sh
