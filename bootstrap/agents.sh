@@ -134,6 +134,10 @@ verify() {
 }
 
 main() {
+  # Vendor installers should discover user-local agent binaries without changing
+  # shell profiles. This affects only the bootstrap process, not the caller.
+  export PATH="$USER_BIN:$PATH"
+
   if [[ $# -ne 1 ]]; then
     usage >&2
     exit 2

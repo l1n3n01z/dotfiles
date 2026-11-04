@@ -29,6 +29,24 @@ On its first run in a fresh distribution, `wsl.sh` configures `/etc/wsl.conf` fo
 
 It never runs `apt upgrade`, `full-upgrade`, or an Ubuntu release upgrade.
 
+## Windows Terminal and post-bootstrap validation
+
+Open a new Windows Terminal tab after bootstrap. Configure its Ubuntu profile command line as:
+
+```text
+wsl.exe -d <distro-name> --cd ~ -- /home/<linux-user>/.nix-profile/bin/fish -l
+```
+
+Find `<distro-name>` with `echo "$WSL_DISTRO_NAME"` inside the distribution. This starts in Linux home and makes Fish a login shell, so Home Manager's normal PATH configuration is active.
+
+Then verify:
+
+```fish
+command -v pi claude copilot
+command -v node npm # both should be absent
+~/dotfiles/bootstrap/agents.sh verify
+```
+
 ## Routine commands
 
 ```bash

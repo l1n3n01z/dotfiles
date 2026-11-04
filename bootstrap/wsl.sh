@@ -190,11 +190,17 @@ main() {
 
   cat <<'EOF'
 
-Bootstrap completed. Complete these interactive steps:
-  1. gh auth login --web --git-protocol https   # if GitHub CLI was not already authenticated
-  2. If GitHub authentication happened after this bootstrap, run gh ssh-key add ~/.ssh/id_ed25519.pub --title "<host>-<distro>".
-  3. Start pi, claude, and copilot; complete each tool's normal login flow.
-  4. Run bootstrap/agents.sh verify.
+Bootstrap completed. Open a new Windows Terminal tab before validating normal shell behavior.
+
+Use a profile command line shaped like:
+  wsl.exe -d <distro-name> --cd ~ -- /home/<linux-user>/.nix-profile/bin/fish -l
+
+Then validate:
+  command -v pi claude copilot
+  command -v node npm  # both should be absent
+  ~/dotfiles/bootstrap/agents.sh verify
+
+Agent authentication remains interactive: start pi, claude, and copilot, then complete each normal login flow.
 EOF
 }
 
