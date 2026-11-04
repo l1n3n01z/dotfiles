@@ -53,8 +53,8 @@ fi
 
 if command -v wslview >/dev/null 2>&1; then
   pass "wslview is available for Windows-browser bridging"
-elif command -v explorer.exe >/dev/null 2>&1; then
-  pass "explorer.exe is available for Windows-browser bridging"
+elif [[ -x /mnt/c/Windows/explorer.exe ]]; then
+  pass "Windows explorer.exe is available for browser bridging"
 else
   warn "no Windows-browser bridge found; use printed URLs or device-code login if automatic browser opening fails"
 fi

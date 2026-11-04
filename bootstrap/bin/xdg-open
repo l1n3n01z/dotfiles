@@ -13,8 +13,8 @@ case "$1" in
     if command -v wslview >/dev/null 2>&1; then
       exec wslview "$1"
     fi
-    if command -v explorer.exe >/dev/null 2>&1; then
-      exec explorer.exe "$1"
+    if [[ -x /mnt/c/Windows/explorer.exe ]]; then
+      exec /mnt/c/Windows/explorer.exe "$1"
     fi
     printf 'Cannot open URL automatically from WSL: %s\n' "$1" >&2
     printf 'Copy the URL into a Windows browser instead.\n' >&2
