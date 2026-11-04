@@ -10,11 +10,11 @@ Before cloning this private repository, install the minimum Ubuntu tools and aut
 sudo apt-get update
 sudo apt-get install -y ca-certificates curl git gh
 
-gh auth login --web --git-protocol https
+gh auth login --web --git-protocol https --scopes admin:public_key
 gh repo clone l1n3n01z/dotfiles ~/dotfiles -- --branch main
 ```
 
-The GitHub CLI browser flow may print a URL/code when WSL cannot open the Windows browser. Complete it manually; no token or SSH private key belongs in this repository.
+The GitHub CLI browser flow may print a URL/code when WSL cannot open the Windows browser. Complete it manually. The `admin:public_key` scope lets bootstrap register a newly generated per-distro SSH public key; no token or SSH private key belongs in this repository.
 
 Then run:
 

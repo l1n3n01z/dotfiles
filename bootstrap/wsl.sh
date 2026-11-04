@@ -139,15 +139,31 @@ configure_distro_ssh_identity() {
   fi
 
   local key_path="$HOME/.ssh/id_ed25519"
-  if [[ -e "$key_path" || -L "$key_path" ]]; then
-    log "Keeping existing distro SSH identity at $key_path"
-    return
+  if [[ ! -e "$key_path" && ! -L "$key_path" ]]; then
+    mkdir -p "$HOME/.ssh"
+    chmod 700 "$HOME/.ssh"
+    log "Generating a new distro SSH identity at $key_path"
+    ssh-keygen -q -t ed25519 -N '' -f "$key_path"
   fi
 
-  mkdir -p "$HOME/.ssh"
-  chmod 700 "$HOME/.ssh"
-  log "Generating a new distro SSH identity at $key_path"
-  ssh-keygen -q -t ed25519 -N '' -f "$key_path"
+  if ! gh ssh-key list >/dev/null 2>&1; then
+    cat >&2 <<'EOF'
+GitHub authentication does not have permission to manage SSH public keys.
+
+Run:
+  gh auth refresh -h github.com -s admin:public_key
+
+Then rerun bootstrap/wsl.sh. The generated private key remains local.
+EOF
+    return 1
+  fi
+
+  local public_key
+  public_key=$(<"$key_path.pub")
+  if gh ssh-key list | grep -Fq "$public_key"; then
+    log "Existing distro SSH identity is already registered: $key_path"
+    return
+  fi
 
   local distro_name="${WSL_DISTRO_NAME:-wsl}"
   gh ssh-key add "$key_path.pub" --title "${HOSTNAME}-${distro_name}"
