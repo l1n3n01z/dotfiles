@@ -21,7 +21,7 @@ require_sudo() {
 install_apt_prerequisites() {
   log 'Installing Ubuntu bootstrap prerequisites'
   sudo apt-get update
-  sudo apt-get install -y ca-certificates curl git wslu
+  sudo apt-get install -y ca-certificates curl git openssh-client wslu
 
   # GitHub CLI should normally be available from current Ubuntu LTS. Do not add
   # a third-party APT source if it is absent: GitHub authentication can be
@@ -80,6 +80,28 @@ activate_home_manager() {
   nix run "$HOME_MANAGER_REF" -- switch --flake "$HOME_MANAGER_FLAKE"
 }
 
+configure_distro_ssh_identity() {
+  if ! command -v gh >/dev/null 2>&1 || ! gh auth status >/dev/null 2>&1; then
+    log 'GitHub CLI is not authenticated; run gh auth login --web --git-protocol https, then register an SSH key with gh ssh-key add.'
+    return
+  fi
+
+  local key_path="$HOME/.ssh/id_ed25519"
+  if [[ -e "$key_path" || -L "$key_path" ]]; then
+    log "Keeping existing distro SSH identity at $key_path"
+    return
+  fi
+
+  mkdir -p "$HOME/.ssh"
+  chmod 700 "$HOME/.ssh"
+  log "Generating a new distro SSH identity at $key_path"
+  ssh-keygen -q -t ed25519 -N '' -f "$key_path"
+
+  local distro_name="${WSL_DISTRO_NAME:-wsl}"
+  gh ssh-key add "$key_path.pub" --title "${HOSTNAME}-${distro_name}"
+  log 'Registered the new distro SSH public key with GitHub'
+}
+
 configure_agents() {
   log 'Linking Git-managed agent configuration'
   "$REPO_ROOT/bootstrap/agent-config.sh" link
@@ -94,13 +116,14 @@ main() {
   install_nix_if_absent
   enable_nix_flakes
   activate_home_manager
+  configure_distro_ssh_identity
   configure_agents
 
   cat <<'EOF'
 
 Bootstrap completed. Complete these interactive steps:
-  1. gh auth login --web --git-protocol https   # if GitHub CLI is not already authenticated
-  2. Generate/register this distro's SSH key before SSH Git use.
+  1. gh auth login --web --git-protocol https   # if GitHub CLI was not already authenticated
+  2. If GitHub authentication happened after this bootstrap, run gh ssh-key add ~/.ssh/id_ed25519.pub --title "<host>-<distro>".
   3. Start pi, claude, and copilot; complete each tool's normal login flow.
   4. Run bootstrap/agents.sh verify.
 EOF
