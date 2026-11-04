@@ -18,6 +18,42 @@ require_sudo() {
   fi
 }
 
+ensure_systemd() {
+  if [[ $(ps -p 1 -o comm= 2>/dev/null | tr -d '[:space:]') == systemd ]]; then
+    return
+  fi
+
+  if [[ -e /etc/wsl.conf ]]; then
+    cat >&2 <<'EOF'
+Systemd is not PID 1 and /etc/wsl.conf already exists.
+
+Review that file and enable:
+  [boot]
+  systemd=true
+
+Then run `wsl --shutdown` from Windows, reopen this distro, and rerun bootstrap/wsl.sh.
+EOF
+    return 75
+  fi
+
+  require_sudo
+  log 'Enabling systemd for this fresh WSL distribution'
+  sudo tee /etc/wsl.conf >/dev/null <<'EOF'
+[boot]
+systemd=true
+EOF
+  cat >&2 <<'EOF'
+Systemd has been configured, but WSL must restart before it takes effect.
+
+From PowerShell or Windows Terminal, run:
+  wsl --shutdown
+
+Reopen this Ubuntu distribution, then rerun:
+  ~/dotfiles/bootstrap/wsl.sh
+EOF
+  return 75
+}
+
 install_apt_prerequisites() {
   log 'Installing Ubuntu bootstrap prerequisites'
   sudo apt-get update
@@ -110,6 +146,7 @@ configure_agents() {
 }
 
 main() {
+  ensure_systemd
   "$REPO_ROOT/bootstrap/wsl-doctor.sh"
   require_sudo
   install_apt_prerequisites
