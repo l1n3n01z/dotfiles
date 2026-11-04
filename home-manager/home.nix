@@ -4,6 +4,7 @@
   pkgs-zls,
   bugwarrior,
   copilot-stats,
+  # tmux-which-key-pkg,
   lib,
   inputs,
   ...
@@ -61,7 +62,7 @@ let
   # pkgs.dotnetCorePackages.dotnet_9.sdk;
   # dotnetSdk = pkgs.dotnetCorePackages.sdk_8_0_3xx;
   # dotnetSdk = pkgs.dotnetCorePackages.sdk_8_0-bin;
-  python = pkgs.python312.withPackages (
+  python = pkgs.python313.withPackages (
     p: with p; [
       recipe-scrapers
       numpy
@@ -323,6 +324,12 @@ in
       # echo "we are a login shell"
       if string match -q -e microsoft (uname -r)
         ulimit -Sn 65536 # increase sockets on WSL2
+
+        # WSLg exposes the Wayland socket in /mnt/wslg/runtime-dir.
+        # Use absolute socket path so clients don't depend on XDG_RUNTIME_DIR.
+        if test -S /mnt/wslg/runtime-dir/wayland-0
+          set -gx WAYLAND_DISPLAY /mnt/wslg/runtime-dir/wayland-0
+        end
       end
       # stupid hack for stupid nix dotnet root
       # set -gx DOTNET_ROOT (dirname (readlink -f (which dotnet)))
@@ -445,17 +452,24 @@ in
       tmuxPlugins.resurrect
       tmuxPlugins.yank
       # tmuxPlugins.gruvbox
+      # {
+      #   plugin = tmux-which-key-pkg;
+      #   extraConfig = ''
+      #     set -g @which-key-trigger "?"
+      #   '';
+      # }
     ];
     shell = "${pkgs.fish}/bin/fish";
     extraConfig = ''
       set -ag terminal-overrides ",xterm-256color:RGB"
       # set -as terminal-features 'contour:sixel'
       bind Space copy-mode
-      # Use v to trigger selection    
+      # Use v to trigger selection
       bind -T copy-mode-vi v  if -F "#{selection_present}" { send -X clear-selection } { send -X begin-selection }
 
       # Use y to yank current selection
       bind -T copy-mode-vi y send-keys -X copy-selection
+
       set-option -g focus-events on
 
       # allow shift enter etc
@@ -471,21 +485,20 @@ in
       bind j display-popup -d "#{pane_current_path}" -E -w 80% -h 80% -E gitui
       bind h display-popup -d "#{pane_current_path}" -w 80% -h 80%
 
-      set -g renumber-windows on 
+      bind r source-file ~/.config/tmux/tmux.conf
+
+      set -g renumber-windows on
 
       set -g pane-border-status "top"
+
       set-option -g status-interval 1
       set-option -g status "on"
-
-      # set -g status-right-length 60
-      # set -g status-right "#[fg=#(pomodoro tmux-color)] #(pomodoro status -f '%%t %!r 🍅') #[fg=yellow]#{?window_bigger,[#{window_offset_x}#,#{window_offset_y}] ,}#{=21:pane_title} %H:%M %d-%b-%y "
 
       ## COLORSCHEME: gruvbox dark (medium)
       # default statusbar color
       set-option -g status-style bg=colour237,fg=colour223 # bg=bg1, fg=fg1
 
       # default window title colors
-      # set-window-option -g window-status-style bg=colour214,fg=colour237 # bg=yellow, fg=bg1
       set-window-option -g window-status-style bg=yellow,fg=colour237 # bg=yellow, fg=bg1
 
       # default window with an activity alert
@@ -523,9 +536,11 @@ in
       set-window-option -g window-status-separator ""
 
       set-option -g status-left "#[bg=colour241,fg=colour248] #S #[bg=colour237,fg=colour241,nobold,noitalics,nounderscore]"
-      set-option -g status-right "#[bg=colour237,fg=colour239 nobold, nounderscore, noitalics]#[bg=colour239,fg=colour246] #(copilot-stats)  %a %Y-%m-%d  %H:%M #[bg=colour239,fg=colour248,nobold,noitalics,nounderscore]#[bg=colour248,fg=colour237] #h "
-
+      #set-option -g status-right "#[bg=colour237,fg=colour239 nobold, nounderscore, noitalics]#[bg=colour239,fg=colour246] #(copilot-stats)  %a %Y-%m-%d  %H:%M #[bg=colour239,fg=colour248,nobold,noitalics,nounderscore]#[bg=colour248,fg=colour237] #h "
+      # set-option -g status-right "#[bg=colour237,fg=colour239,nobold,nounderscore,noitalics]#[bg=colour239,fg=colour246] #(copilot-stats)  %a %Y-%m-%d  %H:%M #[bg=colour239,fg=#(pomodoro tmux-color),nobold,noitalics,nounderscore]#[bg=#(pomodoro tmux-color),fg=black] #(pomodoro status -f '🍅 %!r') #[bg=#(pomodoro tmux-color),fg=colour248,nobold,noitalics,nounderscore]#[bg=colour248,fg=colour237] #h "
       # set-window-option -g window-status-current-format "#[bg=colour214,fg=colour237,nobold,noitalics,nounderscore]#[bg=colour214,fg=colour239] #I #[bg=colour214,fg=colour239,bold] #W#{?window_zoomed_flag,*Z,} #[bg=colour237,fg=colour214,nobold,noitalics,nounderscore]"
+      # set -g status-interval 1
+      set -g status-right "#(~/dotfiles/tmux/status_right.sh)"
       set-window-option -g window-status-current-format "#[bg=colour237,fg=yellow,nobold,noitalics,nounderscore] #I#[bg=yellow,fg=colour237, bold] #W#{?window_zoomed_flag,*Z,} #[bg=colour237,fg=yellow,nobold,noitalics,nounderscore]"
       set-window-option -g window-status-format "#[bg=colour237,fg=colour223] #I#[bg=colour239,fg=colour237,noitalics]#[bg=colour239,fg=colour223] #W #[bg=colour237,fg=colour239,noitalics]"
     '';
