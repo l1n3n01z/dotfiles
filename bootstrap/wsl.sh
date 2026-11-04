@@ -188,13 +188,10 @@ main() {
   configure_distro_ssh_identity
   configure_agents
 
+  local distro_name="${WSL_DISTRO_NAME:-Ubuntu}"
+  printf '\nBootstrap completed. Open a new Windows Terminal tab before validating normal shell behavior.\n\n'
+  printf 'Use this Windows Terminal profile command line:\n  wsl.exe -d %s --cd ~ -- %s/.nix-profile/bin/fish -l\n\n' "$distro_name" "$HOME"
   cat <<'EOF'
-
-Bootstrap completed. Open a new Windows Terminal tab before validating normal shell behavior.
-
-Use a profile command line shaped like:
-  wsl.exe -d <distro-name> --cd ~ -- /home/<linux-user>/.nix-profile/bin/fish -l
-
 Then validate:
   command -v pi claude copilot
   command -v node npm  # both should be absent
