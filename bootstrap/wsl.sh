@@ -57,7 +57,13 @@ EOF
 install_apt_prerequisites() {
   log 'Installing Ubuntu bootstrap prerequisites'
   sudo apt-get update
-  sudo apt-get install -y ca-certificates curl git openssh-client wslu
+  sudo apt-get install -y ca-certificates curl git openssh-client
+
+  # wslu provides wslview on Ubuntu releases that package it. Ubuntu 26 can use
+  # explorer.exe directly, so do not make browser bridging depend on wslu.
+  if ! command -v wslview >/dev/null 2>&1 && apt-cache show wslu >/dev/null 2>&1; then
+    sudo apt-get install -y wslu
+  fi
 
   # GitHub CLI should normally be available from current Ubuntu LTS. Do not add
   # a third-party APT source if it is absent: GitHub authentication can be
