@@ -34,10 +34,10 @@ It never runs `apt upgrade`, `full-upgrade`, or an Ubuntu release upgrade.
 Open a new Windows Terminal tab after bootstrap. Configure its Ubuntu profile command line as:
 
 ```text
-wsl.exe -d <distro-name> --cd ~ -- /home/<linux-user>/.nix-profile/bin/fish -l
+wsl.exe -d <distro-name> --cd ~ -- /home/<linux-user>/.local/bin/fish-login
 ```
 
-Find `<distro-name>` with `echo "$WSL_DISTRO_NAME"` inside the distribution. This starts in Linux home and makes Fish a login shell, so Home Manager's normal PATH configuration is active.
+Find `<distro-name>` with `echo "$WSL_DISTRO_NAME"` inside the distribution. `fish-login` first sources Nix's daemon profile, then starts Fish as a login shell, so Home Manager's normal PATH configuration is active.
 
 Then verify:
 

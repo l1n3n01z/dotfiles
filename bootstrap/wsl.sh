@@ -190,7 +190,7 @@ main() {
 
   local distro_name="${WSL_DISTRO_NAME:-Ubuntu}"
   printf '\nBootstrap completed. Open a new Windows Terminal tab before validating normal shell behavior.\n\n'
-  printf 'Use this Windows Terminal profile command line:\n  wsl.exe -d %s --cd ~ -- %s/.nix-profile/bin/fish -l\n\n' "$distro_name" "$HOME"
+  printf 'Use this Windows Terminal profile command line:\n  wsl.exe -d %s --cd ~ -- %s/.local/bin/fish-login\n\n' "$distro_name" "$HOME"
   cat <<'EOF'
 Then validate:
   command -v pi claude copilot
