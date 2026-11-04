@@ -1,0 +1,6 @@
+#!/bin/sh
+# Start Fish through Nix's login environment for Windows Terminal/WSL profiles.
+if [ -r /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+  . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+fi
+exec "$HOME/.nix-profile/bin/fish" -l "$@"

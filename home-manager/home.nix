@@ -228,6 +228,7 @@ in
           chmod u+x $out/*.sh
         '';
     ".local/bin/xdg-open".source = ../bootstrap/bin/xdg-open;
+    ".local/bin/fish-login".source = ../bootstrap/bin/fish-login;
   };
 
   home.sessionVariables = {
