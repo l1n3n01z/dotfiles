@@ -77,7 +77,17 @@ install_apt_prerequisites() {
   fi
 }
 
+load_existing_nix_profile() {
+  if ! command -v nix >/dev/null 2>&1 && [[ -r /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+    # Make a prior interrupted Nix installation visible before deciding whether
+    # Nix is absent. This is safe to source repeatedly.
+    # shellcheck disable=SC1091
+    source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+  fi
+}
+
 install_nix_if_absent() {
+  load_existing_nix_profile
   if command -v nix >/dev/null 2>&1; then
     log "Nix already installed: $(nix --version)"
     return

@@ -42,12 +42,12 @@ let
     p7zip
     blesh # bash line editor
     imagemagick
-    erlang_27
+    beamPackages.erlang
     rebar3 # erlang package thing, sometimes needed for gleam
     gleam
     inotify-tools # watch files change
     tree
-    elixir
+    beamPackages.elixir
     bugwarrior
     omnisharp-roslyn
   ];
