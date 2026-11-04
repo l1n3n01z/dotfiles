@@ -14,8 +14,11 @@
     # Pinned nixpkgs for zls (current unstable has build failure: https://github.com/NixOS/nixpkgs/issues/488701)
     nixpkgs-zls.url = "github:nixos/nixpkgs/4dadbbb";
 
-    # Pinned nixpkgs for azure-cli 2.77.0 (last known-good before nix upgrade broke post-deploy SslState)
-    nixpkgs-azure.url = "github:nixos/nixpkgs/b599843";
+    # Dedicated nixpkgs input for azure-cli, pinned to nixos-26.05 (2.86.0)
+    nixpkgs-azure.url = "github:nixos/nixpkgs/nixos-26.05";
+
+    # Dedicated nixpkgs input so we can update OmniSharp independently
+    nixpkgs-omnisharp.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # care-nvim.url = "github:max397574/care.nvim/800741c255939c0f345239662ec268557ac3eefa";
     # nvim.url = "github:nix-community/kickstart-nix.nvim";
@@ -28,6 +31,10 @@
       url = "path:./copilot-stats";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # tmux-which-key =     {
+    #   inputs.tmux-which-key.url = "github:Nucc/tmux-which-key";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -43,10 +50,12 @@
       nixpkgs,
       nixpkgs-zls,
       nixpkgs-azure,
+      nixpkgs-omnisharp,
       home-manager,
       # care-nvim,
       bugwarrior,
       copilot-stats,
+      # tmux-which-key,
       # nvim,
       ...
     }:
@@ -64,19 +73,21 @@
               "dotnet-sdk-wrapped-6.0.428"
               "dotnet-sdk-wrapped-7.0.410"
             ];
-            allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
-             "github-copilot-cli"
-           ];
             # allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
             #
             #  "1password-cli"
             # ];
           };
            overlays = [
-             # Pin azure-cli to 2.80.0 from a known-good nixpkgs commit to avoid
-             # the SslState NoneType bug introduced in 2.81.0 (azure-mgmt-web SDK issue)
+             # Pin azure-cli from nixos-26.05 (currently 2.86.0) to avoid
+             # regressions seen in unstable's 2.89.1 packaging.
              (final: prev: {
                azure-cli = pkgs-azure.azure-cli;
+             })
+
+             # Allow updating OmniSharp independently from the main nixpkgs lock
+             (final: prev: {
+               omnisharp-roslyn = pkgs-omnisharp.omnisharp-roslyn;
              })
 
              # Pin github-copilot-cli to a newer version than nixpkgs
@@ -85,22 +96,24 @@
              #   2. Update version below, set hash to "" (empty)
              #   3. Run home-manager switch, nix will error with the correct hash
              #   4. Copy the "got: sha256-..." hash into the hash field
-             (final: prev: {
-               github-copilot-cli = prev.github-copilot-cli.overrideAttrs (old: rec {
-                 version = "1.0.2";
-                 src = prev.fetchurl {
-                   url = "https://github.com/github/copilot-cli/releases/download/v${version}/copilot-linux-x64.tar.gz";
-                   hash = "sha256-Uh+H0E8HM1bGWtlz23Eksy/zoj/TJX8M0/z0xdRkkEc=";
-                 };
-               });
-             })
+             # (final: prev: {
+             #   github-copilot-cli = prev.github-copilot-cli.overrideAttrs (old: rec {
+             #     version = "1.0.2";
+             #     src = prev.fetchurl {
+             #       url = "https://github.com/github/copilot-cli/releases/download/v${version}/copilot-linux-x64.tar.gz";
+             #       hash = "sha256-Uh+H0E8HM1bGWtlz23Eksy/zoj/TJX8M0/z0xdRkkEc=";
+             #     };
+             #   });
+             # })
            ];
         }
       );
       # Pinned pkgs for zls due to build failure in current unstable
       pkgs-zls = import nixpkgs-zls { inherit system; };
-      # Pinned pkgs for azure-cli 2.80.0 due to SslState NoneType bug in 2.81.0
+      # Pinned pkgs for azure-cli from nixos-26.05
       pkgs-azure = import nixpkgs-azure { inherit system; };
+      # Separate nixpkgs import for OmniSharp-only updates
+      pkgs-omnisharp = import nixpkgs-omnisharp { inherit system; };
       # tmux = tmux.defaultPackage.${system};
       # bugwarrior = bugwarrior.defaultPackage.${system};
 
@@ -166,6 +179,7 @@
           inherit inputs pkgs-zls;
           bugwarrior = bugwarrior.defaultPackage.${system};
           copilot-stats = copilot-stats.defaultPackage.${system};
+          # tmux-which-key-pkg = tmux-which-key.packages.${system}.default;
           # tmux-custom = tmux;
           # bugwarrior = bugwarrior;
         };

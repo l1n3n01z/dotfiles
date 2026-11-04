@@ -1,6 +1,0 @@
-{
-  "lastChangelogVersion": "0.70.5",
-  "defaultProvider": "github-copilot",
-  "defaultModel": "gpt-5.2-codex",
-  "defaultThinkingLevel": "medium"
-}

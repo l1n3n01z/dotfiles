@@ -84,6 +84,8 @@ Create a pi extension that monitors token usage during `/ralph-loop`, enforces a
 - /home/nonni/.pi/notes/issues/ralph-loop-extension-baseline.md
 - /home/nonni/.pi/notes/issues/ralph-loop-degraded-zone-reset.md
 - /home/nonni/.pi/notes/issues/ralph-loop-caps-runaway-guard.md
+- /home/nonni/.pi/notes/issues/ralph-select-next-issue-skill.md
+- notes/issues/ralph-issue-explorer-excessive-read.md
 
 ## Linked QA
 

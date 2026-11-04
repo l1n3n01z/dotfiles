@@ -1,0 +1,2 @@
+# Copilot may create a sibling lock while updating the linked settings file.
+*.lock

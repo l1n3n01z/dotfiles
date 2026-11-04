@@ -11,13 +11,11 @@
 let
   programs = with pkgs; [
     process-compose
-    github-copilot-cli
     zig
     postgresql
     firefox
     pandoc
     slides
-    pi-coding-agent
     lsd
     kubectl
     cook-cli
@@ -46,7 +44,6 @@ let
     erlang_27
     rebar3 # erlang package thing, sometimes needed for gleam
     gleam
-    nodejs # eugh
     inotify-tools # watch files change
     tree
     elixir
@@ -78,7 +75,6 @@ let
     dotnetSdk
     python
   ];
-  piAgentDir = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/home-manager/pi-agent";
   sixelSource = pkgs.fetchFromGitHub {
     owner = "csdvrx";
     repo = "sixel-testsuite";
@@ -234,7 +230,7 @@ in
         '';
     # silly hack
     ".local/bin/omnisharp".source = "${pkgs.omnisharp-roslyn}/bin/OmniSharp";
-    ".pi/agent".source = piAgentDir;
+    ".local/bin/xdg-open".source = ../bootstrap/bin/xdg-open;
   };
 
   home.sessionVariables = {

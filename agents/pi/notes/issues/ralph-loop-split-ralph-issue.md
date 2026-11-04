@@ -9,7 +9,7 @@ Split `/ralph-loop` into an orchestrator-only skill and a new `/ralph-issue` ski
 
 ## Acceptance criteria
 
-- [ ] `/ralph-loop` reads the PRD, selects the next actionable issue, and emits `/ralph-issue <issue-ref> (<PRD ref>)`.
-- [ ] `/ralph-loop` stops when no actionable issues remain and outputs `COMPLETE`.
-- [ ] `/ralph-issue` executes one issue and emits `<ralph-issue-complete status="completed|blocked|incomplete">`.
-- [ ] `/ralph-loop` increments its issue count on any completion marker status.
+- [x] `/ralph-loop` reads the PRD, selects the next actionable issue, and emits `/ralph-issue <issue-ref> (<PRD ref>)`.
+- [x] `/ralph-loop` stops when no actionable issues remain and outputs `COMPLETE`.
+- [x] `/ralph-issue` executes one issue and emits `<ralph-issue-complete status="completed|blocked|incomplete">`.
+- [x] `/ralph-loop` increments its issue count on any completion marker status.

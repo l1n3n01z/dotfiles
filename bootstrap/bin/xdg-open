@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Open HTTP(S) links from WSL in the Windows default browser.
+# Leave non-URL handling to Ubuntu's real xdg-open when it is installed.
+set -euo pipefail
+
+if [[ $# -lt 1 ]]; then
+  printf 'Usage: xdg-open <URL-or-path>\n' >&2
+  exit 2
+fi
+
+case "$1" in
+  http://*|https://*)
+    if command -v wslview >/dev/null 2>&1; then
+      exec wslview "$1"
+    fi
+    if command -v explorer.exe >/dev/null 2>&1; then
+      exec explorer.exe "$1"
+    fi
+    printf 'Cannot open URL automatically from WSL: %s\n' "$1" >&2
+    printf 'Copy the URL into a Windows browser instead.\n' >&2
+    exit 1
+    ;;
+esac
+
+if [[ -x /usr/bin/xdg-open ]]; then
+  exec /usr/bin/xdg-open "$@"
+fi
+
+printf 'Ubuntu xdg-open is unavailable for non-URL target: %s\n' "$1" >&2
+exit 1
