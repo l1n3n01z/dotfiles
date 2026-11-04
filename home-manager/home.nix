@@ -33,7 +33,6 @@ let
     autoconf-archive # do we need this?
     starship # prompt
     azure-cli
-    devenv # nix dev envs
     sqlcmd # needed for sql stuff, maybe move to vim extraPackages
     urlencode
     dig # network tool
@@ -45,11 +44,10 @@ let
     beamPackages.erlang
     rebar3 # erlang package thing, sometimes needed for gleam
     gleam
+    bugwarrior
     inotify-tools # watch files change
     tree
     beamPackages.elixir
-    bugwarrior
-    omnisharp-roslyn
   ];
   #it's probably best to leave this gimmick to flakes, and just keep dotnet 8 as my main
   dotnetSdk = (
@@ -229,8 +227,6 @@ in
           cp -a $src/* $out
           chmod u+x $out/*.sh
         '';
-    # silly hack
-    ".local/bin/omnisharp".source = "${pkgs.omnisharp-roslyn}/bin/OmniSharp";
     ".local/bin/xdg-open".source = ../bootstrap/bin/xdg-open;
   };
 
@@ -283,26 +279,15 @@ in
     };
   };
 
-  programs.gh.enable = true;
   programs.gh = {
-    # https://discourse.nixos.org/t/logging-in-with-gh-auth-and-home-manager/61590
-    # gitCredentialHelper = {
-    #   enable = true;
-    #   hosts = [
-    #     "https://github.com"
-    #     "https://api.github.com"
-    #   ];
-    # };
+    enable = true;
     settings = {
       git_protocol = "ssh";
       prompt = "enabled";
     };
-    # hosts = {
-    #   "github.com" = {
-    #     user = "ori-nonni";
-    #   };
-    # };
   };
+  # gh auth owns credentials in hosts.yml; Home Manager owns only preferences.
+  xdg.configFile."gh/config.yml".force = true;
 
   # gh-dash extension has it's own config
   programs.gh-dash.enable = true;
@@ -609,6 +594,7 @@ in
       csharpier # formatter
       fsautocomplete
       netcoredbg
+      omnisharp-roslyn
 
       # Lua
       lua-language-server
